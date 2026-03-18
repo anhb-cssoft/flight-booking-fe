@@ -94,5 +94,37 @@
         "passengers": "Hành khách"
       }
     }
+  },
+  "checkout": {
+    "title": "Thông tin hành khách",
+    "subtitle": "Vui lòng nhập thông tin chính xác như trên hộ chiếu của bạn.",
+    "passenger": "Hành khách",
+    "form": {
+      "title": "Danh xưng",
+      "firstName": "Tên đệm và Tên",
+      "lastName": "Họ",
+      "gender": "Giới tính",
+      "bornOn": "Ngày sinh",
+      "email": "Địa chỉ Email",
+      "phoneNumber": "Số điện thoại",
+      "placeholders": {
+        "firstName": "vd: Van A",
+        "lastName": "vd: Nguyen",
+        "email": "nguyen.vana@example.com",
+        "phoneNumber": "+84901234567"
+      },
+      "validation": {
+        "firstName": "Vui lòng nhập tên",
+        "lastName": "Vui lòng nhập họ",
+        "email": "Địa chỉ email không hợp lệ",
+        "phoneNumber": "Vui lòng nhập số điện thoại",
+        "bornOn": "Vui lòng chọn ngày sinh"
+      }
+    },
+    "sidebar": {
+      "yourTrip": "Chuyến đi của bạn",
+      "total": "Tổng tiền",
+      "bookNow": "Hoàn tất đặt vé"
+    }
   }
 }

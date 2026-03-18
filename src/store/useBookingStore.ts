@@ -1,29 +1,28 @@
 import { create } from "zustand";
 
 interface PassengerDetails {
-  id: string; // From Duffel Offer Passenger ID
+  id: string;
   type: string;
+  title: "mr" | "mrs" | "ms" | "miss" | "dr";
   first_name: string;
   last_name: string;
   gender: "m" | "f";
   born_on: string;
   email: string;
   phone_number: string;
+  add_baggage: boolean; // Thêm hành lý ký gửi
 }
 
 interface BookingState {
-  // Data
   selectedOffer: any | null;
   passengers: PassengerDetails[];
-  
-  // UI Status
   isBooking: boolean;
   bookingError: string | null;
   orderConfirmation: any | null;
 
-  // Actions
   selectOffer: (offer: any) => void;
   setPassengerDetails: (passengerId: string, details: Partial<PassengerDetails>) => void;
+  toggleBaggage: (passengerId: string) => void;
   initPassengers: (offerPassengers: any[]) => void;
   resetBooking: () => void;
   setBookingStatus: (isBooking: boolean, error?: string | null) => void;
@@ -47,12 +46,14 @@ export const useBookingStore = create<BookingState>((set) => ({
     const passengers = offerPassengers.map((p) => ({
       id: p.id,
       type: p.type,
+      title: "mr",
       first_name: "",
       last_name: "",
       gender: "m",
       born_on: "",
       email: "",
       phone_number: "",
+      add_baggage: false,
     }));
     set({ passengers });
   },
@@ -61,6 +62,13 @@ export const useBookingStore = create<BookingState>((set) => ({
     set((state) => ({
       passengers: state.passengers.map((p) =>
         p.id === passengerId ? { ...p, ...details } : p
+      ),
+    })),
+
+  toggleBaggage: (passengerId) =>
+    set((state) => ({
+      passengers: state.passengers.map((p) =>
+        p.id === passengerId ? { ...p, add_baggage: !p.add_baggage } : p
       ),
     })),
 

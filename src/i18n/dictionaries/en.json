@@ -94,5 +94,37 @@
         "passengers": "Passengers"
       }
     }
+  },
+  "checkout": {
+    "title": "Passenger Details",
+    "subtitle": "Please enter the information exactly as it appears on your passport.",
+    "passenger": "Passenger",
+    "form": {
+      "title": "Title",
+      "firstName": "Given Name(s)",
+      "lastName": "Family Name",
+      "gender": "Gender",
+      "bornOn": "Date of Birth",
+      "email": "Email Address",
+      "phoneNumber": "Phone Number",
+      "placeholders": {
+        "firstName": "e.g. John",
+        "lastName": "e.g. Doe",
+        "email": "john.doe@example.com",
+        "phoneNumber": "+1234567890"
+      },
+      "validation": {
+        "firstName": "First name is required",
+        "lastName": "Last name is required",
+        "email": "Invalid email address",
+        "phoneNumber": "Phone number is required",
+        "bornOn": "Date of birth is required"
+      }
+    },
+    "sidebar": {
+      "yourTrip": "Your Trip",
+      "total": "Total Price",
+      "bookNow": "Complete Booking"
+    }
   }
 }
