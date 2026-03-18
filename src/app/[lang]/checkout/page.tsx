@@ -32,12 +32,12 @@ const createPassengerSchema = (t: any) =>
         id: z.string(),
         type: z.string(),
         title: z.enum(["mr", "mrs", "ms", "miss", "dr"], {
-          error_map: () => ({ message: "Required" }),
+          message: "Required",
         }),
         first_name: z.string().min(2, t.checkout.form.validation.firstName),
         last_name: z.string().min(2, t.checkout.form.validation.lastName),
         gender: z.enum(["m", "f"], {
-          error_map: () => ({ message: "Required" }),
+          message: "Required",
         }),
         born_on: z.string().min(1, t.checkout.form.validation.bornOn),
         email: z.string().nullable().optional(),

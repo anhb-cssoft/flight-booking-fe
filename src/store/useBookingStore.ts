@@ -43,7 +43,7 @@ export const useBookingStore = create<BookingState>((set) => ({
   }),
 
   initPassengers: (offerPassengers) => {
-    const passengers = offerPassengers.map((p) => ({
+    const passengers: PassengerDetails[] = offerPassengers.map((p) => ({
       id: p.id,
       type: p.type,
       title: "mr",

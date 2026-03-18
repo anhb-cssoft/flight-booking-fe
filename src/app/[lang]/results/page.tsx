@@ -6,9 +6,9 @@ import { ResultsList } from "@/components/results/ResultsList";
 export default async function ResultsPage({
   params,
 }: {
-  params: Promise<{ lang: Locale }>;
+  params: Promise<{ lang: string }>;
 }) {
-  const { lang } = await params;
+  const { lang } = (await params) as { lang: Locale };
   const dictionary = await getDictionary(lang);
 
   if (!dictionary || !dictionary.search) {

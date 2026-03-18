@@ -10,7 +10,7 @@ import { getDictionary } from "@/i18n/get-dictionary";
 const inter = Inter({ subsets: ["latin"] });
 
 type Props = {
-  params: Promise<{ lang: Locale }>;
+  params: Promise<{ lang: string }>;
 };
 
 export async function generateMetadata(
@@ -34,11 +34,11 @@ import { SuggestionProvider } from "@/components/providers/SuggestionProvider";
 export default async function RootLayout({
   children,
   params,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-  params: Promise<{ lang: Locale }>;
-}>) {
-  const { lang } = await params;
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang } = (await params) as { lang: Locale };
 
   return (
     <html lang={lang}>

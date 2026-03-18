@@ -31,8 +31,8 @@ interface Slice {
     duration: string;
     marketing_carrier_flight_number: string;
     marketing_carrier: { name: string; logo_symbol_url: string };
-    origin: { iata_code: string; name: string; terminal?: string };
-    destination: { iata_code: string; name: string; terminal?: string };
+    origin: { iata_code: string; name: string; city_name?: string; terminal?: string };
+    destination: { iata_code: string; name: string; city_name?: string; terminal?: string };
     aircraft?: { name: string };
     passengers: any[];
   }[];
