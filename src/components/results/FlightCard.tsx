@@ -16,7 +16,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useBookingStore } from "@/store/useBookingStore";
 
 interface Slice {
   id: string;
@@ -55,8 +56,17 @@ interface FlightCardProps {
 export function FlightCard({ offer, dictionary, common }: FlightCardProps) {
   const [isOpen, setIsOpen] = useState(false);
   const params = useParams();
+  const router = useRouter();
   const lang = params.lang as string;
+  const selectOffer = useBookingStore((state) => state.selectOffer);
+  const initPassengers = useBookingStore((state) => state.initPassengers);
   const dateLocale = lang === "vi" ? vi : enUS;
+
+  const handleSelect = () => {
+    selectOffer(offer);
+    initPassengers(offer.passengers);
+    router.push(`/${lang}/checkout`);
+  };
 
   // Calculate total passengers from the offer.passengers array
   const passengerCounts = useMemo(() => {
@@ -370,7 +380,10 @@ export function FlightCard({ offer, dictionary, common }: FlightCardProps) {
                       </p>
                     </div>
                   </div>
-                  <Button className="w-full md:w-auto bg-primary hover:bg-primary/90 text-white rounded-xl h-12 md:h-13 px-8 md:px-10 text-base md:text-lg font-black shadow-2xl shadow-primary/40 transition-all hover:scale-105 active:scale-95">
+                  <Button 
+                    className="w-full md:w-auto bg-primary hover:bg-primary/90 text-white rounded-xl h-12 md:h-13 px-8 md:px-10 text-base md:text-lg font-black shadow-2xl shadow-primary/40 transition-all hover:scale-105 active:scale-95"
+                    onClick={handleSelect}
+                  >
                     {dictionary.results.details.confirmSelect}
                   </Button>
                 </div>
