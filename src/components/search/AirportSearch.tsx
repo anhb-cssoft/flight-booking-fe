@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronsUpDown, Plane } from "lucide-react";
+import { ChevronsUpDown, Plane, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +18,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useSuggestions } from "@/components/providers/SuggestionProvider";
+import { useDebounce } from "@/hooks/use-debounce";
 
 interface Airport {
   id: string;
@@ -31,25 +33,51 @@ interface AirportSearchProps {
   value?: string;
   onChange: (value: string) => void;
   label?: string;
+  isOrigin?: boolean;
 }
 
-export function AirportSearch({ placeholder, value, onChange, label }: AirportSearchProps) {
+export function AirportSearch({ 
+  placeholder, 
+  value, 
+  onChange, 
+  label,
+  isOrigin = false 
+}: AirportSearchProps) {
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+  
+  const { 
+    originSuggestions, 
+    destinationSuggestions, 
+    fetchSuggestions, 
+    isLoadingSuggestions 
+  } = useSuggestions();
 
-  const { data: suggestions, isLoading } = useQuery({
-    queryKey: ["airports", searchTerm],
+  const { data: searchResults, isLoading: isSearching } = useQuery({
+    queryKey: ["airports", debouncedSearchTerm],
     queryFn: async () => {
-      if (searchTerm.length < 2) return [];
-      const res = await fetch(`/api/duffel/suggestions?query=${encodeURIComponent(searchTerm)}`);
+      if (debouncedSearchTerm.length < 2) return [];
+      const res = await fetch(`/api/duffel/suggestions?query=${encodeURIComponent(debouncedSearchTerm)}`);
       if (!res.ok) throw new Error("Failed to fetch");
       const json = await res.json();
       return json.data as Airport[];
     },
-    enabled: searchTerm.length >= 2,
+    enabled: debouncedSearchTerm.length >= 2,
   });
 
-  const selectedAirport = suggestions?.find((a) => a.iata_code === value);
+  useEffect(() => {
+    if (open) {
+      fetchSuggestions();
+    }
+  }, [open, fetchSuggestions]);
+
+  const displaySuggestions = searchTerm.length < 2 
+    ? (isOrigin ? originSuggestions : destinationSuggestions)
+    : (searchResults || []);
+
+  const selectedAirport = [...(originSuggestions || []), ...(destinationSuggestions || []), ...(searchResults || [])]
+    .find((a) => a.iata_code === value);
 
   return (
     <div className="flex flex-col space-y-2">
@@ -84,22 +112,34 @@ export function AirportSearch({ placeholder, value, onChange, label }: AirportSe
             />
             <CommandList>
               <CommandEmpty>
-                {isLoading ? "Searching..." : "No airport found."}
+                {isSearching ? "Searching..." : "No airport found."}
               </CommandEmpty>
+              
+              {searchTerm.length < 2 && (
+                <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground border-b mb-1">
+                  {isOrigin ? "Nearby Airports" : "Popular Destinations"}
+                </div>
+              )}
+
               <CommandGroup>
-                {suggestions?.map((airport) => (
+                {displaySuggestions.map((airport) => (
                   <CommandItem
                     key={airport.id}
                     value={airport.iata_code}
-                    data-checked={value === airport.iata_code}
                     onSelect={(currentValue) => {
                       onChange(currentValue);
                       setOpen(false);
+                      setSearchTerm("");
                     }}
                   >
-                    <div className="flex flex-col">
-                      <span>{airport.name} ({airport.iata_code})</span>
-                      <span className="text-xs text-muted-foreground">{airport.city_name}</span>
+                    <div className="flex items-center w-full">
+                      <div className="mr-2 bg-muted p-2 rounded-full">
+                        <MapPin className="h-4 w-4" />
+                      </div>
+                      <div className="flex flex-col overflow-hidden">
+                        <span className="truncate font-medium">{airport.name} ({airport.iata_code})</span>
+                        <span className="text-xs text-muted-foreground truncate">{airport.city_name}</span>
+                      </div>
                     </div>
                   </CommandItem>
                 ))}

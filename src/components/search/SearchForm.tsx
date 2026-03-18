@@ -199,6 +199,7 @@ export function SearchForm({ dictionary, common }: SearchFormProps) {
                             placeholder={dictionary.form.originPlaceholder}
                             value={field.value}
                             onChange={field.onChange}
+                            isOrigin={true}
                           />
                         </FormControl>
                         <FormMessage />
@@ -219,6 +220,7 @@ export function SearchForm({ dictionary, common }: SearchFormProps) {
                             placeholder={dictionary.form.destinationPlaceholder}
                             value={field.value}
                             onChange={field.onChange}
+                            isOrigin={false}
                           />
                         </FormControl>
                         <FormMessage />

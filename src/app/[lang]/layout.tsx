@@ -29,6 +29,8 @@ export async function generateStaticParams() {
   return i18n.locales.map((locale) => ({ lang: locale }));
 }
 
+import { SuggestionProvider } from "@/components/providers/SuggestionProvider";
+
 export default async function RootLayout({
   children,
   params,
@@ -42,9 +44,11 @@ export default async function RootLayout({
     <html lang={lang}>
       <body className={`${inter.className} min-h-screen flex flex-col`}>
         <QueryProvider>
-          <Navbar lang={lang} />
-          <main className="flex-1">{children}</main>
-          <Footer lang={lang} />
+          <SuggestionProvider>
+            <Navbar lang={lang} />
+            <main className="flex-1">{children}</main>
+            <Footer lang={lang} />
+          </SuggestionProvider>
         </QueryProvider>
       </body>
     </html>
