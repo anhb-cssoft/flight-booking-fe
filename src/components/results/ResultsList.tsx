@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { SearchForm } from "../search/SearchForm";
+import { cn } from "@/lib/utils";
 
 interface ResultsListProps {
   dictionary: any;
@@ -126,25 +127,30 @@ export function ResultsList({ dictionary, common }: ResultsListProps) {
           <div>
             <h1 className="text-3xl font-black tracking-tight flex items-center gap-3">
               {dictionary.results.title}
-              {!isLoading && (
-                <Badge
-                  variant="outline"
-                  className="text-lg font-medium px-3 h-8 rounded-lg"
-                >
-                  {totalResultsCount}
-                </Badge>
-              )}
+              <Badge
+                variant="outline"
+                className={cn(
+                  "text-lg font-medium px-3 h-8 rounded-lg transition-opacity",
+                  isLoading ? "opacity-50" : "opacity-100"
+                )}
+              >
+                {isLoading ? "..." : totalResultsCount}
+              </Badge>
             </h1>
             <p className="text-slate-500 mt-1 font-medium">
               {searchData.slices[0].origin} to {searchData.slices[0].destination} • {searchData.slices[0].departure_date}
             </p>
           </div>
 
-          {!isLoading && !error && (
+          {!error && (
             <div className="flex items-center gap-3">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="rounded-xl border-slate-200">
+                  <Button 
+                    variant="outline" 
+                    className="rounded-xl border-slate-200"
+                    disabled={isLoading}
+                  >
                     <Filter className="mr-2 h-4 w-4" />
                     {dictionary.results.filters.stops}
                     <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
@@ -164,7 +170,11 @@ export function ResultsList({ dictionary, common }: ResultsListProps) {
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="rounded-xl border-slate-200">
+                  <Button 
+                    variant="outline" 
+                    className="rounded-xl border-slate-200"
+                    disabled={isLoading}
+                  >
                     <ArrowUpDown className="mr-2 h-4 w-4" />
                     Sort by
                     <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
