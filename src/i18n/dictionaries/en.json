@@ -57,7 +57,8 @@
       "return": "Return",
       "errors": {
         "origin": "Please select an origin airport",
-        "destination": "Please select a destination airport"
+        "destination": "Please select a destination airport",
+        "returnDate": "Please select a return date"
       }
     }
   }

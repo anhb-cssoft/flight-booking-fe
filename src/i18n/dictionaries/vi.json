@@ -57,7 +57,8 @@
       "return": "Ngày về",
       "errors": {
         "origin": "Vui lòng chọn sân bay xuất phát",
-        "destination": "Vui lòng chọn sân bay điểm đến"
+        "destination": "Vui lòng chọn sân bay điểm đến",
+        "returnDate": "Vui lòng chọn ngày trở về"
       }
     }
   }

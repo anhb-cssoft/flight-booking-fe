@@ -52,6 +52,14 @@ const createSearchSchema = (t: any) => z.object({
     children: z.number().min(0),
   }),
   cabinClass: z.enum(["economy", "premium_economy", "business", "first"]),
+}).refine((data) => {
+  if (data.tripType === "round-trip" && !data.returnDate) {
+    return false;
+  }
+  return true;
+}, {
+  message: t.form.errors.returnDate,
+  path: ["returnDate"],
 });
 
 type SearchFormValues = z.infer<ReturnType<typeof createSearchSchema>>;
@@ -240,6 +248,7 @@ export function SearchForm({ dictionary, common }: SearchFormProps) {
                               variant={"outline"}
                               className={cn(
                                 "w-full pl-3 text-left font-normal h-12 truncate",
+                                form.formState.errors.returnDate && "border-destructive text-destructive",
                                 !flights[0].departureDate && "text-muted-foreground"
                               )}
                             >
@@ -270,6 +279,10 @@ export function SearchForm({ dictionary, common }: SearchFormProps) {
                                 form.setValue(`flights.0.departureDate`, range.from);
                               }
                               form.setValue("returnDate", range?.to);
+                              // Clear error when user picks a return date
+                              if (range?.to) {
+                                form.clearErrors("returnDate");
+                              }
                             }}
                             disabled={(date) => date < new Date()}
                             numberOfMonths={2}
@@ -277,6 +290,9 @@ export function SearchForm({ dictionary, common }: SearchFormProps) {
                           />
                         </PopoverContent>
                       </Popover>
+                      <FormMessage>
+                        {form.formState.errors.returnDate?.message}
+                      </FormMessage>
                     </FormItem>
                   ) : (
                     <FormField
