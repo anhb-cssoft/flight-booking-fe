@@ -249,7 +249,7 @@ export function SearchForm({ dictionary, common, initialData }: SearchFormProps)
           <div className="space-y-6 pt-4">
             {flights.map((_, index) => (
               <div key={index} className="grid grid-cols-1 gap-4 lg:grid-cols-12 items-end group relative">
-                <div className="lg:col-span-4 xl:col-span-4">
+                <div className="lg:col-span-5 min-w-0">
                   <FormField
                     control={form.control}
                     name={`flights.${index}.origin`}
@@ -270,7 +270,7 @@ export function SearchForm({ dictionary, common, initialData }: SearchFormProps)
                   />
                 </div>
 
-                <div className="lg:col-span-4 xl:col-span-4">
+                <div className="lg:col-span-5 min-w-0">
                   <FormField
                     control={form.control}
                     name={`flights.${index}.destination`}
@@ -291,7 +291,7 @@ export function SearchForm({ dictionary, common, initialData }: SearchFormProps)
                   />
                 </div>
 
-                <div className="lg:col-span-4 xl:col-span-4">
+                <div className="lg:col-span-2 min-w-0">
                   {tripType === "round-trip" && index === 0 ? (
                     <FormItem className="min-w-0">
                       <FormLabel className="font-bold text-xs uppercase tracking-widest text-slate-400 ml-1">{dictionary.form.dates}</FormLabel>
@@ -301,13 +301,13 @@ export function SearchForm({ dictionary, common, initialData }: SearchFormProps)
                             <Button
                               variant={"outline"}
                               className={cn(
-                                "w-full pl-4 text-left font-bold h-12 truncate border-slate-200 rounded-2xl bg-white/50 hover:bg-white transition-all min-w-0",
+                                "w-full pl-3 pr-2 text-left font-bold h-12 truncate border-slate-200 rounded-2xl bg-white/50 hover:bg-white transition-all min-w-0",
                                 form.formState.errors.returnDate && "border-destructive text-destructive bg-destructive/5",
                                 !flights[0].departureDate && "text-slate-400"
                               )}
                             >
-                              <CalendarIcon className="mr-3 h-5 w-5 text-primary opacity-60 shrink-0" />
-                              <span className="truncate flex-1 min-w-0">
+                              <CalendarIcon className="mr-2 h-4 w-4 text-primary opacity-60 shrink-0" />
+                              <span className="truncate flex-1 min-w-0 text-[13px]">
                                 {flights[0].departureDate ? (
                                   returnDate ? (
                                     `${format(flights[0].departureDate, "MMM d")} - ${format(returnDate, "MMM d")}`
@@ -358,13 +358,13 @@ export function SearchForm({ dictionary, common, initialData }: SearchFormProps)
                                 <Button
                                   variant={"outline"}
                                   className={cn(
-                                    "w-full pl-4 text-left font-bold h-12 truncate border-slate-200 rounded-2xl bg-white/50 hover:bg-white transition-all min-w-0",
+                                    "w-full pl-3 pr-2 text-left font-bold h-12 truncate border-slate-200 rounded-2xl bg-white/50 hover:bg-white transition-all min-w-0",
                                     !field.value && "text-slate-400"
                                   )}
                                 >
-                                  <CalendarIcon className="mr-3 h-5 w-5 text-primary opacity-60 shrink-0" />
-                                  <span className="truncate flex-1 min-w-0">
-                                    {field.value ? format(field.value, "MMM d, yyyy") : dictionary.form.datePlaceholder}
+                                  <CalendarIcon className="mr-2 h-4 w-4 text-primary opacity-60 shrink-0" />
+                                  <span className="truncate flex-1 min-w-0 text-[13px]">
+                                    {field.value ? format(field.value, "MMM d, yy") : dictionary.form.datePlaceholder}
                                   </span>
                                 </Button>
                               </FormControl>
