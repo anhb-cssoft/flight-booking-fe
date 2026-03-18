@@ -103,35 +103,39 @@ export function AirportSearch({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full h-12 justify-between font-normal"
+            className="w-full h-12 justify-between font-bold border-slate-200 rounded-2xl bg-white/50 hover:bg-white transition-all min-w-0 px-4"
           >
             {value ? (
-              <span className="flex items-center truncate min-w-0">
-                <Plane className="mr-2 h-4 w-4 shrink-0 opacity-50" />
-                <span className="truncate">
+              <div className="flex items-center truncate min-w-0 flex-1">
+                <Plane className="mr-3 h-5 w-5 shrink-0 text-primary opacity-60" />
+                <span className="truncate text-slate-700">
                   {selectedAirport ? `${selectedAirport.name} (${selectedAirport.iata_code})` : value}
                 </span>
-              </span>
+              </div>
             ) : (
-              <span className="text-muted-foreground">{placeholder}</span>
+              <div className="flex items-center truncate min-w-0 flex-1">
+                <Plane className="mr-3 h-5 w-5 shrink-0 text-slate-400 opacity-40" />
+                <span className="text-slate-400 truncate">{placeholder}</span>
+              </div>
             )}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-40" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
-          <Command shouldFilter={false}>
+        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 rounded-3xl border-slate-200 overflow-hidden shadow-2xl" align="start">
+          <Command shouldFilter={false} className="rounded-none">
             <CommandInput 
               placeholder="Search city or airport..." 
               value={searchTerm}
               onValueChange={setSearchTerm}
+              className="h-12 border-none focus:ring-0"
             />
-            <CommandList>
-              <CommandEmpty>
+            <CommandList className="max-h-[300px] md:max-h-[400px]">
+              <CommandEmpty className="py-6 text-sm text-slate-500 text-center">
                 {isSearching ? "Searching..." : "No airport found."}
               </CommandEmpty>
               
               {searchTerm.length < 2 && (
-                <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground border-b mb-1">
+                <div className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-50/50 border-y border-slate-100">
                   {isOrigin ? "Nearby Airports" : "Popular Destinations"}
                 </div>
               )}
@@ -146,14 +150,15 @@ export function AirportSearch({
                       setOpen(false);
                       setSearchTerm("");
                     }}
+                    className="px-4 py-3 cursor-pointer hover:bg-slate-50 transition-colors"
                   >
-                    <div className="flex items-center w-full">
-                      <div className="mr-2 bg-muted p-2 rounded-full">
+                    <div className="flex items-center w-full min-w-0">
+                      <div className="mr-3 bg-primary/10 p-2 rounded-xl text-primary shrink-0">
                         <MapPin className="h-4 w-4" />
                       </div>
-                      <div className="flex flex-col overflow-hidden">
-                        <span className="truncate font-medium">{airport.name} ({airport.iata_code})</span>
-                        <span className="text-xs text-muted-foreground truncate">{airport.city_name}</span>
+                      <div className="flex flex-col min-w-0 flex-1">
+                        <span className="truncate font-bold text-slate-900">{airport.name} ({airport.iata_code})</span>
+                        <span className="text-xs text-slate-500 truncate font-medium">{airport.city_name}</span>
                       </div>
                     </div>
                   </CommandItem>

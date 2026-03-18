@@ -169,32 +169,32 @@ export function SearchForm({ dictionary, common, initialData }: SearchFormProps)
   };
 
   return (
-    <div className="glass-card rounded-[2rem] p-8 shadow-2xl">
+    <div className="glass-card rounded-[2rem] p-4 md:p-8 shadow-2xl mx-auto w-full max-w-6xl overflow-hidden">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="flex flex-wrap items-center gap-6 pb-2 border-b">
+          <div className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6 pb-6 lg:pb-4 border-b">
             <FormField
               control={form.control}
               name="tripType"
               render={({ field }) => (
-                <FormItem className="space-y-0">
+                <FormItem className="space-y-0 w-full lg:w-auto overflow-x-auto no-scrollbar">
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
                       value={field.value}
-                      className="flex space-x-4"
+                      className="flex items-center space-x-4 lg:space-x-6 min-w-max pb-2 lg:pb-0"
                     >
                       <FormItem className="flex items-center space-x-2 space-y-0">
                         <FormControl><RadioGroupItem value="round-trip" /></FormControl>
-                        <FormLabel className="font-medium cursor-pointer">{dictionary.tripType.roundTrip}</FormLabel>
+                        <FormLabel className="font-bold text-sm cursor-pointer whitespace-nowrap text-slate-700">{dictionary.tripType.roundTrip}</FormLabel>
                       </FormItem>
                       <FormItem className="flex items-center space-x-2 space-y-0">
                         <FormControl><RadioGroupItem value="one-way" /></FormControl>
-                        <FormLabel className="font-medium cursor-pointer">{dictionary.tripType.oneWay}</FormLabel>
+                        <FormLabel className="font-bold text-sm cursor-pointer whitespace-nowrap text-slate-700">{dictionary.tripType.oneWay}</FormLabel>
                       </FormItem>
                       <FormItem className="flex items-center space-x-2 space-y-0">
                         <FormControl><RadioGroupItem value="multi-city" /></FormControl>
-                        <FormLabel className="font-medium cursor-pointer">{dictionary.tripType.multiCity}</FormLabel>
+                        <FormLabel className="font-bold text-sm cursor-pointer whitespace-nowrap text-slate-700">{dictionary.tripType.multiCity}</FormLabel>
                       </FormItem>
                     </RadioGroup>
                   </FormControl>
@@ -202,56 +202,60 @@ export function SearchForm({ dictionary, common, initialData }: SearchFormProps)
               )}
             />
 
-            <div className="h-6 w-px bg-slate-200" />
+            <div className="hidden lg:block h-8 w-px bg-slate-200" />
 
-            <FormField
-              control={form.control}
-              name="cabinClass"
-              render={({ field }) => (
-                <FormItem className="w-44 space-y-0">
-                  <Select onValueChange={field.onChange} value={field.value}>
+            <div className="flex items-center gap-4 lg:gap-6 w-full lg:w-auto">
+              <FormField
+                control={form.control}
+                name="cabinClass"
+                render={({ field }) => (
+                  <FormItem className="flex-1 lg:w-44 space-y-0 min-w-0">
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="border-0 bg-transparent p-0 h-10 focus:ring-0 shadow-none font-bold text-sm text-slate-700">
+                          <div className="flex items-center truncate">
+                            <Briefcase className="mr-2 h-4 w-4 opacity-60 shrink-0" />
+                            <div className="truncate"><SelectValue placeholder={dictionary.form.cabin} /></div>
+                          </div>
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="rounded-xl border-slate-200">
+                        <SelectItem value="economy">{common.economy}</SelectItem>
+                        <SelectItem value="premium_economy">{common.premium_economy}</SelectItem>
+                        <SelectItem value="business">{common.business}</SelectItem>
+                        <SelectItem value="first">{common.first}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+
+              <div className="h-6 w-px bg-slate-200 shrink-0" />
+
+              <FormField
+                control={form.control}
+                name="passengers"
+                render={({ field }) => (
+                  <FormItem className="flex-1 md:w-auto space-y-0 min-w-0">
                     <FormControl>
-                      <SelectTrigger className="border-0 bg-transparent p-0 h-12 focus:ring-0 shadow-none font-medium">
-                        <Briefcase className="mr-2 h-4 w-4 opacity-50" />
-                        <SelectValue placeholder={dictionary.form.cabin} />
-                      </SelectTrigger>
+                      <PassengerPicker value={field.value} onChange={field.onChange} common={common} />
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="economy">{common.economy}</SelectItem>
-                      <SelectItem value="premium_economy">{common.premium_economy}</SelectItem>
-                      <SelectItem value="business">{common.business}</SelectItem>
-                      <SelectItem value="first">{common.first}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormItem>
-              )}
-            />
-
-            <div className="h-6 w-px bg-slate-200" />
-
-            <FormField
-              control={form.control}
-              name="passengers"
-              render={({ field }) => (
-                <FormItem className="w-auto space-y-0">
-                  <FormControl>
-                    <PassengerPicker value={field.value} onChange={field.onChange} common={common} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
 
-          <div className="space-y-4 pt-4">
+          <div className="space-y-6 pt-4">
             {flights.map((_, index) => (
-              <div key={index} className="grid grid-cols-1 gap-4 lg:grid-cols-12 items-start group">
-                <div className="lg:col-span-5">
+              <div key={index} className="grid grid-cols-1 gap-4 lg:grid-cols-12 items-end group relative">
+                <div className="lg:col-span-4 xl:col-span-4">
                   <FormField
                     control={form.control}
                     name={`flights.${index}.origin`}
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className={cn(index > 0 && "lg:sr-only")}>{dictionary.form.origin}</FormLabel>
+                      <FormItem className="min-w-0">
+                        <FormLabel className={cn("font-bold text-xs uppercase tracking-widest text-slate-400 ml-1", index > 0 && "lg:sr-only")}>{dictionary.form.origin}</FormLabel>
                         <FormControl>
                           <AirportSearch
                             placeholder={dictionary.form.originPlaceholder}
@@ -260,19 +264,19 @@ export function SearchForm({ dictionary, common, initialData }: SearchFormProps)
                             isOrigin={true}
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-[10px] font-bold" />
                       </FormItem>
                     )}
                   />
                 </div>
 
-                <div className="lg:col-span-4">
+                <div className="lg:col-span-4 xl:col-span-4">
                   <FormField
                     control={form.control}
                     name={`flights.${index}.destination`}
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className={cn(index > 0 && "lg:sr-only")}>{dictionary.form.destination}</FormLabel>
+                      <FormItem className="min-w-0">
+                        <FormLabel className={cn("font-bold text-xs uppercase tracking-widest text-slate-400 ml-1", index > 0 && "lg:sr-only")}>{dictionary.form.destination}</FormLabel>
                         <FormControl>
                           <AirportSearch
                             placeholder={dictionary.form.destinationPlaceholder}
@@ -281,28 +285,29 @@ export function SearchForm({ dictionary, common, initialData }: SearchFormProps)
                             isOrigin={false}
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-[10px] font-bold" />
                       </FormItem>
                     )}
                   />
                 </div>
 
-                <div className="lg:col-span-3">
+                <div className="lg:col-span-4 xl:col-span-4">
                   {tripType === "round-trip" && index === 0 ? (
-                    <FormItem>
-                      <FormLabel>{dictionary.form.dates}</FormLabel>
+                    <FormItem className="min-w-0">
+                      <FormLabel className="font-bold text-xs uppercase tracking-widest text-slate-400 ml-1">{dictionary.form.dates}</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
                             <Button
                               variant={"outline"}
                               className={cn(
-                                "w-full pl-3 text-left font-normal h-12 truncate",
-                                form.formState.errors.returnDate && "border-destructive text-destructive",
-                                !flights[0].departureDate && "text-muted-foreground"
+                                "w-full pl-4 text-left font-bold h-12 truncate border-slate-200 rounded-2xl bg-white/50 hover:bg-white transition-all min-w-0",
+                                form.formState.errors.returnDate && "border-destructive text-destructive bg-destructive/5",
+                                !flights[0].departureDate && "text-slate-400"
                               )}
                             >
-                              <span className="truncate">
+                              <CalendarIcon className="mr-3 h-5 w-5 text-primary opacity-60 shrink-0" />
+                              <span className="truncate flex-1 min-w-0">
                                 {flights[0].departureDate ? (
                                   returnDate ? (
                                     `${format(flights[0].departureDate, "MMM d")} - ${format(returnDate, "MMM d")}`
@@ -313,11 +318,10 @@ export function SearchForm({ dictionary, common, initialData }: SearchFormProps)
                                   dictionary.form.datesPlaceholder
                                 )}
                               </span>
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50 shrink-0" />
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
+                        <PopoverContent className="w-auto p-0 rounded-3xl border-slate-200 overflow-hidden shadow-2xl" align="start">
                           <Calendar
                             mode="range"
                             selected={{
@@ -330,7 +334,6 @@ export function SearchForm({ dictionary, common, initialData }: SearchFormProps)
                                 form.setValue("returnDate", range.to);
                                 if (range.to) form.clearErrors("returnDate");
                               } else {
-                                // Cho phép xóa hoặc chọn lại từ đầu
                                 form.setValue("returnDate", undefined);
                               }
                             }}
@@ -340,33 +343,33 @@ export function SearchForm({ dictionary, common, initialData }: SearchFormProps)
                           />
                         </PopoverContent>
                       </Popover>
-                      <FormMessage>{form.formState.errors.returnDate?.message}</FormMessage>
+                      <FormMessage className="text-[10px] font-bold">{form.formState.errors.returnDate?.message}</FormMessage>
                     </FormItem>
                   ) : (
                     <FormField
                       control={form.control}
                       name={`flights.${index}.departureDate`}
                       render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className={cn(index > 0 && "lg:sr-only")}>{dictionary.form.departure}</FormLabel>
+                        <FormItem className="min-w-0">
+                          <FormLabel className={cn("font-bold text-xs uppercase tracking-widest text-slate-400 ml-1", index > 0 && "lg:sr-only")}>{dictionary.form.departure}</FormLabel>
                           <Popover>
                             <PopoverTrigger asChild>
                               <FormControl>
                                 <Button
                                   variant={"outline"}
                                   className={cn(
-                                    "w-full pl-3 text-left font-normal h-12 truncate",
-                                    !field.value && "text-muted-foreground"
+                                    "w-full pl-4 text-left font-bold h-12 truncate border-slate-200 rounded-2xl bg-white/50 hover:bg-white transition-all min-w-0",
+                                    !field.value && "text-slate-400"
                                   )}
                                 >
-                                  <span className="truncate">
-                                    {field.value ? format(field.value, "PPP") : dictionary.form.datePlaceholder}
+                                  <CalendarIcon className="mr-3 h-5 w-5 text-primary opacity-60 shrink-0" />
+                                  <span className="truncate flex-1 min-w-0">
+                                    {field.value ? format(field.value, "MMM d, yyyy") : dictionary.form.datePlaceholder}
                                   </span>
-                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50 shrink-0" />
                                 </Button>
                               </FormControl>
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
+                            <PopoverContent className="w-auto p-0 rounded-3xl border-slate-200 overflow-hidden shadow-2xl" align="start">
                               <Calendar
                                 mode="single"
                                 selected={field.value}
@@ -376,7 +379,7 @@ export function SearchForm({ dictionary, common, initialData }: SearchFormProps)
                               />
                             </PopoverContent>
                           </Popover>
-                          <FormMessage />
+                          <FormMessage className="text-[10px] font-bold" />
                         </FormItem>
                       )}
                     />
@@ -384,12 +387,12 @@ export function SearchForm({ dictionary, common, initialData }: SearchFormProps)
                 </div>
 
                 {tripType === "multi-city" && index > 0 && (
-                  <div className="lg:col-span-1 pb-1">
+                  <div className="absolute -right-2 top-0 lg:static lg:col-span-1 lg:flex lg:justify-center">
                     <Button
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                      className="h-8 w-8 text-slate-400 hover:text-destructive hover:bg-destructive/10 rounded-full"
                       onClick={() => removeFlight(index)}
                     >
                       <X className="h-4 w-4" />
@@ -405,7 +408,7 @@ export function SearchForm({ dictionary, common, initialData }: SearchFormProps)
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="text-primary hover:text-primary hover:bg-primary/5"
+                  className="text-primary hover:text-primary hover:bg-primary/5 rounded-xl font-bold border-primary/20"
                   onClick={addFlight}
                 >
                   <Plus className="mr-2 h-4 w-4" />
@@ -415,16 +418,16 @@ export function SearchForm({ dictionary, common, initialData }: SearchFormProps)
             )}
           </div>
 
-          <div className="flex justify-end pt-4">
+          <div className="flex flex-col md:flex-row md:justify-end gap-4 pt-6 border-t border-slate-100/50">
             <Button 
               type="submit" 
               size="lg" 
-              className="w-full md:w-auto px-12 text-lg h-12 cursor-pointer disabled:cursor-not-allowed"
+              className="w-full md:w-auto px-16 h-14 rounded-2xl text-lg font-black shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95 cursor-pointer disabled:cursor-not-allowed"
               disabled={form.formState.isSubmitting}
             >
               {form.formState.isSubmitting ? (
                 <div className="flex items-center gap-2">
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
                   {dictionary.form.search}...
                 </div>
               ) : (
