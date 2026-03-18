@@ -31,6 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useRouter, useParams } from "next/navigation";
 import { AirportSearch } from "./AirportSearch";
 import { PassengerPicker } from "./PassengerPicker";
 
@@ -65,6 +66,9 @@ const createSearchSchema = (t: any) => z.object({
 type SearchFormValues = z.infer<ReturnType<typeof createSearchSchema>>;
 
 export function SearchForm({ dictionary, common }: SearchFormProps) {
+  const router = useRouter();
+  const params = useParams();
+  const lang = params.lang as string;
   const searchSchema = createSearchSchema(dictionary);
   
   const form = useForm<SearchFormValues>({
@@ -87,7 +91,37 @@ export function SearchForm({ dictionary, common }: SearchFormProps) {
   }, [tripType, flights.length, form]);
 
   function onSubmit(data: SearchFormValues) {
-    console.log("Search Data:", data);
+    const searchParams = new URLSearchParams();
+    
+    // Construct Duffel-friendly slices
+    const slices = data.flights.map(f => ({
+      origin: f.origin,
+      destination: f.destination,
+      departure_date: format(f.departureDate, "yyyy-MM-dd"),
+    }));
+
+    if (data.tripType === "round-trip" && data.returnDate) {
+      slices.push({
+        origin: data.flights[0].destination,
+        destination: data.flights[0].origin,
+        departure_date: format(data.returnDate, "yyyy-MM-dd"),
+      });
+    }
+
+    const passengers = [
+      ...Array(data.passengers.adults).fill({ type: "adult" }),
+      ...Array(data.passengers.children).fill({ type: "child" }),
+    ];
+
+    const searchData = {
+      slices,
+      passengers,
+      cabin_class: data.cabinClass,
+    };
+
+    // Use base64 to keep URL manageable
+    const encodedData = btoa(JSON.stringify(searchData));
+    router.push(`/${lang}/results?q=${encodedData}`);
   }
 
   const addFlight = () => {

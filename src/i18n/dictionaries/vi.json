@@ -60,6 +60,28 @@
         "destination": "Vui lòng chọn sân bay điểm đến",
         "returnDate": "Vui lòng chọn ngày trở về"
       }
+    },
+    "results": {
+      "title": "Kết quả tìm kiếm",
+      "found": "chuyến bay được tìm thấy",
+      "cheapest": "Rẻ nhất",
+      "fastest": "Nhanh nhất",
+      "best": "Tốt nhất",
+      "duration": "Thời gian bay",
+      "stops": {
+        "direct": "Bay thẳng",
+        "stop": "điểm dừng",
+        "stops": "điểm dừng"
+      },
+      "select": "Chọn chuyến bay",
+      "loading": "Đang tìm kiếm những lựa chọn tốt nhất...",
+      "noResults": "Không tìm thấy chuyến bay nào phù hợp.",
+      "filters": {
+        "title": "Bộ lọc",
+        "stops": "Số điểm dừng",
+        "airlines": "Hãng hàng không",
+        "priceRange": "Khoảng giá"
+      }
     }
   }
 }

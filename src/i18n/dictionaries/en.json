@@ -60,6 +60,28 @@
         "destination": "Please select a destination airport",
         "returnDate": "Please select a return date"
       }
+    },
+    "results": {
+      "title": "Flight Results",
+      "found": "flights found",
+      "cheapest": "Cheapest",
+      "fastest": "Fastest",
+      "best": "Best",
+      "duration": "Duration",
+      "stops": {
+        "direct": "Direct",
+        "stop": "stop",
+        "stops": "stops"
+      },
+      "select": "Select Flight",
+      "loading": "Searching for the best offers...",
+      "noResults": "No flights found for your search.",
+      "filters": {
+        "title": "Filters",
+        "stops": "Stops",
+        "airlines": "Airlines",
+        "priceRange": "Price Range"
+      }
     }
   }
 }

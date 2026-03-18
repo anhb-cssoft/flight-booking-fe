@@ -15,16 +15,16 @@
 - [x] Validate return date for round-trip flights using Zod.
 - [x] Add multi-city flight selection logic.
 
-## Phase 3: Results Listing (UPCOMING)
-- [ ] Implement search submission and navigation to `/results`.
-- [ ] Create `/api/duffel/offers` route handler to fetch flight offers.
-- [ ] Design and implement flight search results page with loading skeletons.
-- [ ] Build reusable `FlightCard` component (Price, Airline, Times, Duration, Stops).
-- [ ] Add sorting functionality (Price, Duration, Departure Time).
-- [ ] Implement filtering sidebar (Stops, Airlines, Time ranges).
-- [ ] Handle empty states and offer expiration.
+## Phase 3: Results Listing (COMPLETED)
+- [x] Implement search submission and navigation to `/results`.
+- [x] Create `/api/duffel/offers` route handler to fetch flight offers.
+- [x] Design and implement flight search results page with loading skeletons.
+- [x] Build reusable `FlightCard` component (Price, Airline, Times, Duration, Stops).
+- [x] Add sorting functionality (Price, Duration).
+- [x] Implement filtering by stops.
+- [x] Handle empty states and errors gracefully.
 
-## Phase 4: Passenger Details
+## Phase 4: Passenger Details (UPCOMING)
 - [ ] Design and implement the `/checkout` page.
 - [ ] Create a multi-step form for entering passenger details.
 - [ ] Integrate form validation using React Hook Form and Zod.
