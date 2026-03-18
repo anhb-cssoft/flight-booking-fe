@@ -81,6 +81,17 @@
         "stops": "Stops",
         "airlines": "Airlines",
         "priceRange": "Price Range"
+      },
+      "details": {
+        "itinerary": "Flight Itinerary",
+        "outbound": "Outbound Flight",
+        "return": "Return Flight",
+        "operatedBy": "Operated by",
+        "layoverConnection": "Layover Connection",
+        "waitIn": "wait in",
+        "totalAmount": "Total Amount",
+        "confirmSelect": "Confirm & Select",
+        "passengers": "Passengers"
       }
     }
   }

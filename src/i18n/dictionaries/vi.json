@@ -81,6 +81,17 @@
         "stops": "Số điểm dừng",
         "airlines": "Hãng hàng không",
         "priceRange": "Khoảng giá"
+      },
+      "details": {
+        "itinerary": "Hành trình bay",
+        "outbound": "Chuyến bay đi",
+        "return": "Chuyến bay về",
+        "operatedBy": "Vận hành bởi",
+        "layoverConnection": "Điểm dừng kết nối",
+        "waitIn": "đợi tại",
+        "totalAmount": "Tổng cộng",
+        "confirmSelect": "Xác nhận & Chọn",
+        "passengers": "Hành khách"
       }
     }
   }

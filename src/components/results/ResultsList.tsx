@@ -200,7 +200,12 @@ export function ResultsList({ dictionary, common }: ResultsListProps) {
               <>
                 <div className="space-y-4">
                   {allOffers.map((offer) => (
-                    <FlightCard key={offer.id} offer={offer} dictionary={dictionary} />
+                    <FlightCard 
+                      key={offer.id} 
+                      offer={offer} 
+                      dictionary={dictionary} 
+                      common={common}
+                    />
                   ))}
                 </div>
 
