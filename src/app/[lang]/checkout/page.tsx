@@ -25,35 +25,46 @@ import { format, parseISO } from "date-fns";
 
 const createPassengerSchema = (t: any) =>
   z.object({
-    passengers: z
-      .array(
-        z.object({
-          id: z.string(),
-          type: z.string(),
-          title: z.enum(["mr", "mrs", "ms", "miss", "dr"]),
-          first_name: z.string().min(2, t.checkout.form.validation.firstName),
-          last_name: z.string().min(2, t.checkout.form.validation.lastName),
-          gender: z.enum(["m", "f"]),
-          born_on: z.string().min(1, t.checkout.form.validation.bornOn),
-          email: z
-            .string()
-            .email(t.checkout.form.validation.email)
-            .optional()
-            .or(z.literal("")),
-          phone_number: z.string().optional().or(z.literal("")),
-          add_baggage: z.boolean().default(false),
+    passengers: z.array(
+      z.object({
+        id: z.string(),
+        type: z.string(),
+        title: z.enum(["mr", "mrs", "ms", "miss", "dr"], {
+          error_map: () => ({ message: "Required" }),
         }),
-      )
-      .refine(
-        (data) => {
-          const lead = data[0];
-          return lead.email && lead.phone_number;
-        },
-        {
-          message: "Lead passenger contact info required",
-          path: ["passengers.0.email"],
-        },
-      ),
+        first_name: z.string().min(2, t.checkout.form.validation.firstName),
+        last_name: z.string().min(2, t.checkout.form.validation.lastName),
+        gender: z.enum(["m", "f"], {
+          error_map: () => ({ message: "Required" }),
+        }),
+        born_on: z.string().min(1, t.checkout.form.validation.bornOn),
+        email: z
+          .string()
+          .email(t.checkout.form.validation.email)
+          .optional()
+          .or(z.literal("")),
+        phone_number: z.string().optional().or(z.literal("")),
+        add_baggage: z.boolean().default(false),
+      })
+    ).superRefine((passengers, ctx) => {
+      const lead = passengers[0];
+      if (lead) {
+        if (!lead.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: t.checkout.form.validation.email,
+            path: [0, "email"],
+          });
+        }
+        if (!lead.phone_number || lead.phone_number.length < 5) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: t.checkout.form.validation.phoneNumber,
+            path: [0, "phone_number"],
+          });
+        }
+      }
+    }),
   });
 
 export default function CheckoutPage() {

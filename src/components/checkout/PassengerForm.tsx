@@ -34,18 +34,30 @@ interface PassengerFormProps {
 }
 
 export function PassengerForm({ index, dictionary }: PassengerFormProps) {
-  const { control, watch, setValue } = useFormContext();
+  const {
+    control,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useFormContext();
   const t = dictionary.checkout.form;
   const passengers = useBookingStore((state) => state.passengers);
   const toggleBaggage = useBookingStore((state) => state.toggleBaggage);
   const currentPassenger = passengers[index];
   const isBaggageSelected = watch(`passengers.${index}.add_baggage`);
 
+  const passengerErrors = (errors.passengers as any)?.[index];
+
   const handleBaggageToggle = () => {
     const newValue = !isBaggageSelected;
     setValue(`passengers.${index}.add_baggage`, newValue);
     if (currentPassenger) toggleBaggage(currentPassenger.id);
   };
+
+  const hasNameError =
+    passengerErrors?.title ||
+    passengerErrors?.first_name ||
+    passengerErrors?.last_name;
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -70,8 +82,15 @@ export function PassengerForm({ index, dictionary }: PassengerFormProps) {
             <div className="h-6" />
 
             {/* Unified Name Row with Mobile Support */}
-            <div className="space-y-0">
-              <div className="flex flex-col md:grid md:grid-cols-12 border border-slate-200 rounded-2xl overflow-hidden focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/30 transition-all bg-white">
+            <div className="space-y-2">
+              <div
+                className={cn(
+                  "flex flex-col md:grid md:grid-cols-12 border rounded-2xl overflow-hidden transition-all bg-white",
+                  hasNameError
+                    ? "border-destructive ring-1 ring-destructive/20"
+                    : "border-slate-200 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/30",
+                )}
+              >
                 {/* Title */}
                 <div className="md:col-span-3 border-b md:border-b-0 md:border-r border-slate-200 bg-slate-50/50">
                   <FormField
@@ -141,39 +160,86 @@ export function PassengerForm({ index, dictionary }: PassengerFormProps) {
                   />
                 </div>
               </div>
-              <div className="flex flex-wrap gap-x-4 px-2 mt-2">
-                <FormMessage
-                  name={`passengers.${index}.title`}
-                  className="text-[10px] font-bold"
-                />
-                <FormMessage
-                  name={`passengers.${index}.first_name`}
-                  className="text-[10px] font-bold"
-                />
-                <FormMessage
-                  name={`passengers.${index}.last_name`}
-                  className="text-[10px] font-bold"
-                />
+
+              {/* Refined Name Errors aligned with inputs */}
+              <div className="min-h-[16px] px-1">
+                <div className="hidden md:grid md:grid-cols-12 gap-0">
+                  <div className="md:col-span-3 px-5">
+                    {passengerErrors?.title && (
+                      <p className="text-[10px] font-bold text-destructive animate-in fade-in slide-in-from-top-1">
+                        {passengerErrors.title.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="md:col-span-5 px-5">
+                    {passengerErrors?.first_name && (
+                      <p className="text-[10px] font-bold text-destructive animate-in fade-in slide-in-from-top-1">
+                        {passengerErrors.first_name.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="md:col-span-4 px-5">
+                    {passengerErrors?.last_name && (
+                      <p className="text-[10px] font-bold text-destructive animate-in fade-in slide-in-from-top-1">
+                        {passengerErrors.last_name.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Mobile errors (stacked) */}
+                <div className="md:hidden flex flex-col gap-1 px-4">
+                  {passengerErrors?.title && (
+                    <p className="text-[10px] font-bold text-destructive flex items-center gap-1">
+                      <span className="h-1 w-1 rounded-full bg-destructive" />
+                      {passengerErrors.title.message}
+                    </p>
+                  )}
+                  {passengerErrors?.first_name && (
+                    <p className="text-[10px] font-bold text-destructive flex items-center gap-1">
+                      <span className="h-1 w-1 rounded-full bg-destructive" />
+                      {passengerErrors.first_name.message}
+                    </p>
+                  )}
+                  {passengerErrors?.last_name && (
+                    <p className="text-[10px] font-bold text-destructive flex items-center gap-1">
+                      <span className="h-1 w-1 rounded-full bg-destructive" />
+                      {passengerErrors.last_name.message}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
 
             {/* Gender & DOB */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-3">
-                <FormLabel className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">
+                <FormLabel
+                  className={cn(
+                    "text-[11px] font-black uppercase tracking-[0.2em] ml-1 transition-colors",
+                    passengerErrors?.gender ? "text-destructive" : "text-slate-400",
+                  )}
+                >
                   {t.gender}
                 </FormLabel>
                 <FormField
                   control={control}
                   name={`passengers.${index}.gender`}
                   render={({ field }) => (
-                    <FormItem className="space-y-0">
+                    <FormItem className="space-y-1.5">
                       <Select
                         onValueChange={field.onChange}
                         value={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger className="!h-14 bg-slate-50 border-slate-200 rounded-2xl px-6 font-bold hover:bg-slate-100/50 transition-colors w-full">
+                          <SelectTrigger
+                            className={cn(
+                              "!h-14 bg-slate-50 border rounded-2xl px-6 font-bold hover:bg-slate-100/50 transition-colors w-full",
+                              passengerErrors?.gender
+                                ? "border-destructive ring-1 ring-destructive/20"
+                                : "border-slate-200",
+                            )}
+                          >
                             <SelectValue placeholder="Gender" />
                           </SelectTrigger>
                         </FormControl>
@@ -186,32 +252,49 @@ export function PassengerForm({ index, dictionary }: PassengerFormProps) {
                           <SelectItem value="f">Female</SelectItem>
                         </SelectContent>
                       </Select>
-                      <FormMessage className="text-[10px] font-bold mt-1.5" />
+                      <FormMessage className="text-[11px] font-bold ml-1 min-h-0" />
                     </FormItem>
                   )}
                 />
               </div>
 
               <div className="space-y-3">
-                <FormLabel className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">
+                <FormLabel
+                  className={cn(
+                    "text-[11px] font-black uppercase tracking-[0.2em] ml-1 transition-colors",
+                    passengerErrors?.born_on ? "text-destructive" : "text-slate-400",
+                  )}
+                >
                   {t.bornOn}
                 </FormLabel>
                 <FormField
                   control={control}
                   name={`passengers.${index}.born_on`}
                   render={({ field }) => (
-                    <FormItem className="space-y-0">
+                    <FormItem className="space-y-1.5">
                       <FormControl>
                         <div className="relative group">
                           <Input
                             type="date"
                             {...field}
-                            className="h-14 bg-slate-50 border-slate-200 rounded-2xl pl-12 pr-6 font-bold focus:ring-primary/20 transition-all w-full"
+                            className={cn(
+                              "h-14 bg-slate-50 border rounded-2xl pl-12 pr-6 font-bold focus:ring-primary/20 transition-all w-full",
+                              passengerErrors?.born_on
+                                ? "border-destructive ring-1 ring-destructive/20"
+                                : "border-slate-200",
+                            )}
                           />
-                          <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+                          <CalendarIcon
+                            className={cn(
+                              "absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 transition-colors",
+                              passengerErrors?.born_on
+                                ? "text-destructive"
+                                : "text-slate-400 group-focus-within:text-primary",
+                            )}
+                          />
                         </div>
                       </FormControl>
-                      <FormMessage className="text-[10px] font-bold mt-1.5" />
+                      <FormMessage className="text-[11px] font-bold ml-1 min-h-0" />
                     </FormItem>
                   )}
                 />
@@ -287,7 +370,12 @@ export function PassengerForm({ index, dictionary }: PassengerFormProps) {
                     name={`passengers.${index}.email`}
                     render={({ field }) => (
                       <FormItem className="space-y-3">
-                        <FormLabel className="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                        <FormLabel
+                          className={cn(
+                            "text-[11px] font-black uppercase tracking-widest ml-1 transition-colors",
+                            passengerErrors?.email ? "text-destructive" : "text-slate-400",
+                          )}
+                        >
                           {t.email}
                         </FormLabel>
                         <FormControl>
@@ -295,12 +383,24 @@ export function PassengerForm({ index, dictionary }: PassengerFormProps) {
                             <Input
                               placeholder={t.placeholders.email}
                               {...field}
-                              className="h-14 bg-slate-50 border-slate-200 rounded-2xl pl-12 focus:ring-primary/20 transition-all w-full"
+                              className={cn(
+                                "h-14 bg-slate-50 border rounded-2xl pl-12 focus:ring-primary/20 transition-all w-full",
+                                passengerErrors?.email
+                                  ? "border-destructive ring-1 ring-destructive/20"
+                                  : "border-slate-200",
+                              )}
                             />
-                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+                            <Mail
+                              className={cn(
+                                "absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 transition-colors",
+                                passengerErrors?.email
+                                  ? "text-destructive"
+                                  : "text-slate-400 group-focus-within:text-primary",
+                              )}
+                            />
                           </div>
                         </FormControl>
-                        <FormMessage className="text-[10px] font-bold" />
+                        <FormMessage className="text-[11px] font-bold ml-1 min-h-0" />
                       </FormItem>
                     )}
                   />
@@ -309,7 +409,12 @@ export function PassengerForm({ index, dictionary }: PassengerFormProps) {
                     name={`passengers.${index}.phone_number`}
                     render={({ field }) => (
                       <FormItem className="space-y-3">
-                        <FormLabel className="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                        <FormLabel
+                          className={cn(
+                            "text-[11px] font-black uppercase tracking-widest ml-1 transition-colors",
+                            passengerErrors?.phone_number ? "text-destructive" : "text-slate-400",
+                          )}
+                        >
                           {t.phoneNumber}
                         </FormLabel>
                         <FormControl>
@@ -317,12 +422,24 @@ export function PassengerForm({ index, dictionary }: PassengerFormProps) {
                             <Input
                               placeholder={t.placeholders.phoneNumber}
                               {...field}
-                              className="h-14 bg-slate-50 border-slate-200 rounded-2xl pl-12 focus:ring-primary/20 transition-all w-full"
+                              className={cn(
+                                "h-14 bg-slate-50 border rounded-2xl pl-12 focus:ring-primary/20 transition-all w-full",
+                                passengerErrors?.phone_number
+                                  ? "border-destructive ring-1 ring-destructive/20"
+                                  : "border-slate-200",
+                              )}
                             />
-                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+                            <Phone
+                              className={cn(
+                                "absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 transition-colors",
+                                passengerErrors?.phone_number
+                                  ? "text-destructive"
+                                  : "text-slate-400 group-focus-within:text-primary",
+                              )}
+                            />
                           </div>
                         </FormControl>
-                        <FormMessage className="text-[10px] font-bold" />
+                        <FormMessage className="text-[11px] font-bold ml-1 min-h-0" />
                       </FormItem>
                     )}
                   />
