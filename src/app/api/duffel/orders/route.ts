@@ -8,9 +8,10 @@ const duffel = new Duffel({
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { selectedOfferId, passengers } = body;
+    const { selectedOfferId, passengers, totalAmount, currency } = body;
 
     // Map passengers to Duffel format
+    // Note: given_name and family_name are required by Duffel
     const duffelPassengers = passengers.map((p: any) => ({
       id: p.id,
       title: p.title,
@@ -22,35 +23,50 @@ export async function POST(request: NextRequest) {
       phone_number: p.phone_number || undefined,
     }));
 
-    // In a real app, you'd handle payment here. 
-    // For Duffel Test environment, we can often create an order with 'instant' type if supported by the provider,
-    // or use the 'pay_later' if available. 
-    // Most test offers support instant booking with a mock payment or no payment required in the request.
+    // Create the order using 'instant' type for test environment
+    console.log("Creating Duffel Order for Offer:", selectedOfferId);
     
     const response = await duffel.orders.create({
       selected_offers: [selectedOfferId],
       passengers: duffelPassengers,
-      type: "instant", // Attempt instant booking
+      type: "instant",
       payments: [
         {
           type: "balance",
-          amount: (await duffel.offers.get(selectedOfferId)).data.total_amount,
-          currency: (await duffel.offers.get(selectedOfferId)).data.total_currency,
+          amount: totalAmount,
+          currency: currency,
         }
       ]
     });
+
+    console.log("Duffel Order Created Successfully:", response.data.id);
 
     return NextResponse.json({
       data: response.data
     });
   } catch (error: any) {
-    console.error("Duffel SDK Order Error:", error.message, error.errors);
+    console.error("Duffel API Error Details:");
+    console.error("- Message:", error.message);
+    console.error("- Status:", error.status);
+    console.error("- Errors:", JSON.stringify(error.errors, null, 2));
+    
+    const firstError = error.errors?.[0];
+    let userMessage = "Failed to create booking. Please try a different flight.";
+    
+    if (firstError) {
+      if (firstError.code === "internal_server_error") {
+        userMessage = "The airline's reservation system is temporarily unavailable. Please try selecting a different flight or airline.";
+      } else {
+        userMessage = firstError.message || firstError.title || userMessage;
+      }
+    }
+
     return NextResponse.json(
       { 
-        error: error.message || "Failed to create booking",
-        details: error.errors 
+        error: userMessage,
+        details: error.errors || [] 
       },
-      { status: 500 }
+      { status: error.status || 500 }
     );
   }
 }

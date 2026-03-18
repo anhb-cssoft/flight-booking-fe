@@ -125,6 +125,16 @@
       "yourTrip": "Chuyến đi của bạn",
       "total": "Tổng tiền",
       "bookNow": "Hoàn tất đặt vé"
+    },
+    "confirmation": {
+      "title": "Đặt vé thành công!",
+      "subtitle": "Chuyến bay của bạn đã được đặt thành công. Thông tin chi tiết đã được gửi đến email của bạn.",
+      "orderReference": "Mã đơn hàng",
+      "status": "Trạng thái",
+      "confirmed": "Đã xác nhận",
+      "totalPaid": "Tổng tiền đã thanh toán",
+      "backToHome": "Quay lại Trang chủ",
+      "itinerary": "Tóm tắt hành trình"
     }
   }
 }

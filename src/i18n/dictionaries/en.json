@@ -125,6 +125,16 @@
       "yourTrip": "Your Trip",
       "total": "Total Price",
       "bookNow": "Complete Booking"
+    },
+    "confirmation": {
+      "title": "Booking Confirmed!",
+      "subtitle": "Your flight has been successfully booked. Information has been sent to your email.",
+      "orderReference": "Order Reference",
+      "status": "Status",
+      "confirmed": "Confirmed",
+      "totalPaid": "Total Paid",
+      "backToHome": "Back to Home",
+      "itinerary": "Itinerary Summary"
     }
   }
 }

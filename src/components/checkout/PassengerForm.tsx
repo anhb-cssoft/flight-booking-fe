@@ -420,8 +420,22 @@ export function PassengerForm({ index, dictionary }: PassengerFormProps) {
                         <FormControl>
                           <div className="relative group">
                             <Input
-                              placeholder={t.placeholders.phoneNumber}
+                              placeholder="+1234567890"
                               {...field}
+                              onChange={(e) => {
+                                let val = e.target.value;
+                                // Automatically add + if it's the first character and missing
+                                if (val && !val.startsWith("+")) {
+                                  val = "+" + val;
+                                }
+                                // Only allow digits after the +
+                                val = val.replace(/[^\d+]/g, "");
+                                // Ensure only one + at the start
+                                if (val.lastIndexOf("+") > 0) {
+                                  val = val.slice(0, 1) + val.slice(1).replace(/\+/g, "");
+                                }
+                                field.onChange(val);
+                              }}
                               className={cn(
                                 "h-14 bg-slate-50 border rounded-2xl pl-12 focus:ring-primary/20 transition-all w-full",
                                 passengerErrors?.phone_number

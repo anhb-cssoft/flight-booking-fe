@@ -90,7 +90,8 @@ export function ResultsList({ dictionary, common }: ResultsListProps) {
       return currentOffset < totalOffers ? currentOffset : undefined;
     },
     enabled: !!searchData,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0, // Disable stale time to ensure data is always considered old
+    gcTime: 0,    // Disable garbage collection cache to force fresh fetches
   });
 
   // Lấy toàn bộ danh sách chuyến bay từ các trang đã fetch

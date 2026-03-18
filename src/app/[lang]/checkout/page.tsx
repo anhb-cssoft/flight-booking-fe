@@ -11,6 +11,7 @@ import { Locale } from "@/i18n-config";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { PassengerForm } from "@/components/checkout/PassengerForm";
+import { BookingConfirmation } from "@/components/checkout/BookingConfirmation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Plane,
@@ -22,6 +23,7 @@ import {
   Briefcase,
 } from "lucide-react";
 import { format, parseISO } from "date-fns";
+import { cn } from "@/lib/utils";
 
 const createPassengerSchema = (t: any) =>
   z.object({
@@ -49,6 +51,7 @@ const createPassengerSchema = (t: any) =>
     ).superRefine((passengers, ctx) => {
       const lead = passengers[0];
       if (lead) {
+        // Email validation: Required and must be valid format
         if (!lead.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email)) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
@@ -56,10 +59,24 @@ const createPassengerSchema = (t: any) =>
             path: [0, "email"],
           });
         }
-        if (!lead.phone_number || lead.phone_number.length < 5) {
+        // Phone validation: MUST start with '+' and contain only digits after that
+        const internationalPhoneRegex = /^\+[1-9]\d{1,14}$/;
+        if (!lead.phone_number) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: t.checkout.form.validation.phoneNumber,
+            path: [0, "phone_number"],
+          });
+        } else if (!lead.phone_number.startsWith("+")) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Phone number must start with '+' (e.g., +84...)",
+            path: [0, "phone_number"],
+          });
+        } else if (!internationalPhoneRegex.test(lead.phone_number)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Invalid international phone format",
             path: [0, "phone_number"],
           });
         }
@@ -103,6 +120,11 @@ export default function CheckoutPage() {
     return parseFloat(selectedOffer.total_amount) + baggageTotal;
   }, [selectedOffer, baggageTotal]);
 
+  const isExpired = useMemo(() => {
+    if (!selectedOffer?.expires_at) return false;
+    return new Date(selectedOffer.expires_at) < new Date();
+  }, [selectedOffer]);
+
   const schema = dictionary ? createPassengerSchema(dictionary) : z.any();
 
   const methods = useForm({
@@ -113,6 +135,10 @@ export default function CheckoutPage() {
   });
 
   const onSubmit = async (data: any) => {
+    if (isExpired) {
+      setBookingStatus(false, "This offer has expired. Please go back and select a new flight.");
+      return;
+    }
     setBookingStatus(true);
     try {
       const response = await fetch("/api/duffel/orders", {
@@ -121,18 +147,45 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           selectedOfferId: selectedOffer.id,
           passengers: data.passengers,
+          totalAmount: selectedOffer.total_amount, // Original flight price
+          currency: selectedOffer.total_currency,
         }),
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.error || "Failed to create order");
+        const errors = result.details || [];
+        const firstError = errors[0];
+        
+        if (firstError) {
+          // Special handling for expired offers
+          if (firstError.code === "offer_no_longer_available" || firstError.code === "offer_expired") {
+            throw new Error(`${dictionary.search.results.noResults} ${firstError.message}`);
+          }
+          
+          // Map validation errors to react-hook-form if source field is provided
+          if (firstError.type === "validation_error" && firstError.source?.field) {
+            const field = firstError.source.field;
+            // Map common Duffel fields to our form structure
+            if (field === "phone_number") {
+              methods.setError("passengers.0.phone_number", { message: firstError.message });
+            } else if (field === "email") {
+              methods.setError("passengers.0.email", { message: firstError.message });
+            }
+          }
+
+          const title = firstError.title;
+          const message = firstError.message;
+          throw new Error(title && message && !message.includes(title) ? `${title}: ${message}` : (message || title));
+        }
+        
+        throw new Error(result.error || "An unexpected error occurred");
       }
 
-      const order = await response.json();
       setOrderConfirmation({
-        ...order.data,
-        total_amount: totalAmount.toString(), // Cập nhật tổng tiền bao gồm hành lý
+        ...result.data,
+        total_amount: totalAmount.toString(), // Price with baggage
       });
     } catch (err: any) {
       setBookingStatus(false, err.message);
@@ -149,58 +202,11 @@ export default function CheckoutPage() {
 
   if (orderConfirmation) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-16 text-center">
-        <div className="bg-green-50 text-green-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-          <CheckCircle2 className="h-12 w-12" />
-        </div>
-        <h1 className="text-4xl font-black mb-4 tracking-tight">
-          Booking Confirmed!
-        </h1>
-        <p className="text-slate-500 text-lg mb-8 font-medium">
-          Your flight has been successfully booked. Order reference:
-          <span className="text-slate-900 font-bold ml-2">
-            {orderConfirmation.id}
-          </span>
-        </p>
-
-        <Card className="text-left mb-8 border-slate-200 shadow-xl rounded-[2rem] overflow-hidden">
-          <CardHeader className="bg-slate-900 text-white p-6">
-            <CardTitle className="text-lg">Order Summary</CardTitle>
-          </CardHeader>
-          <CardContent className="p-8 space-y-6">
-            <div className="flex justify-between items-center pb-4 border-b">
-              <span className="text-slate-500 font-bold uppercase text-xs tracking-widest">
-                Status
-              </span>
-              <span className="bg-green-100 text-green-700 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
-                Confirmed
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-slate-500 font-bold uppercase text-xs tracking-widest">
-                Total Paid
-              </span>
-              <span className="text-3xl font-black text-slate-900 tracking-tighter">
-                {new Intl.NumberFormat(lang === "vi" ? "vi-VN" : "en-US", {
-                  style: "currency",
-                  currency: orderConfirmation.total_currency,
-                }).format(parseFloat(orderConfirmation.total_amount))}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Button
-          size="lg"
-          className="rounded-2xl px-12 h-14 font-black shadow-xl shadow-primary/20"
-          onClick={() => {
-            resetBooking();
-            router.push(`/${lang}`);
-          }}
-        >
-          Back to Home
-        </Button>
-      </div>
+      <BookingConfirmation
+        order={orderConfirmation}
+        dictionary={dictionary}
+        lang={lang}
+      />
     );
   }
 
@@ -230,12 +236,32 @@ export default function CheckoutPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           <div className="lg:col-span-8 space-y-8">
+            {isExpired && (
+              <div className="bg-amber-50 border border-amber-200 p-6 rounded-[1.5rem] flex flex-col items-center text-center gap-4 animate-in fade-in slide-in-from-top-4">
+                <div className="h-12 w-12 rounded-full bg-amber-100 flex items-center justify-center">
+                  <AlertCircle className="h-6 w-6 text-amber-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black text-amber-900 uppercase tracking-widest mb-1">Offer Expired</h3>
+                  <p className="text-amber-700 font-medium max-w-md">
+                    This flight offer is no longer available because the time limit has reached. Please return to the results page to find the latest offers.
+                  </p>
+                </div>
+                <Button 
+                  onClick={() => router.back()}
+                  className="rounded-xl px-8 bg-amber-600 hover:bg-amber-700 text-white font-bold"
+                >
+                  Back to Results
+                </Button>
+              </div>
+            )}
+
             <FormProvider {...methods}>
               <form
                 onSubmit={methods.handleSubmit(onSubmit)}
                 className="space-y-10"
               >
-                <div className="space-y-8">
+                <div className={cn("space-y-8 transition-opacity", isExpired && "opacity-50 pointer-events-none")}>
                   {storePassengers.map((_, index) => (
                     <PassengerForm
                       key={index}
@@ -257,7 +283,7 @@ export default function CheckoutPage() {
                     type="submit"
                     size="lg"
                     className="w-full md:w-auto px-16 h-16 rounded-[1.5rem] text-xl font-black shadow-2xl shadow-primary/30 transition-all hover:scale-105 active:scale-95"
-                    disabled={isBooking}
+                    disabled={isBooking || isExpired}
                   >
                     {isBooking ? (
                       <>
