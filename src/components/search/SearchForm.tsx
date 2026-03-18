@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useEffect } from "react";
 import { CalendarIcon, Briefcase, Plus, X } from "lucide-react";
-import { format } from "date-fns";
+import { format, isAfter, isBefore, startOfDay } from "date-fns";
 import { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -38,6 +38,7 @@ import { PassengerPicker } from "./PassengerPicker";
 interface SearchFormProps {
   dictionary: any;
   common: any;
+  initialData?: any;
 }
 
 const createSearchSchema = (t: any) => z.object({
@@ -65,24 +66,56 @@ const createSearchSchema = (t: any) => z.object({
 
 type SearchFormValues = z.infer<ReturnType<typeof createSearchSchema>>;
 
-export function SearchForm({ dictionary, common }: SearchFormProps) {
+export function SearchForm({ dictionary, common, initialData }: SearchFormProps) {
   const router = useRouter();
   const params = useParams();
   const lang = params.lang as string;
   const searchSchema = createSearchSchema(dictionary);
-  
-  const form = useForm<SearchFormValues>({
-    resolver: zodResolver(searchSchema),
-    defaultValues: {
+
+  const getInitialValues = () => {
+    if (initialData) {
+      const isRoundTrip = initialData.slices.length === 2 && 
+                         initialData.slices[0].origin === initialData.slices[1].destination;
+      const isMultiCity = initialData.slices.length > 2 || 
+                         (initialData.slices.length === 2 && !isRoundTrip);
+
+      return {
+        tripType: isRoundTrip ? "round-trip" : (isMultiCity ? "multi-city" : "one-way"),
+        flights: initialData.slices.map((s: any) => ({
+          origin: s.origin,
+          destination: s.destination,
+          departureDate: new Date(s.departure_date),
+        })).slice(0, isRoundTrip ? 1 : initialData.slices.length),
+        returnDate: isRoundTrip ? new Date(initialData.slices[1].departure_date) : undefined,
+        passengers: {
+          adults: initialData.passengers.filter((p: any) => p.type === "adult").length,
+          children: initialData.passengers.filter((p: any) => p.type === "child").length,
+        },
+        cabinClass: initialData.cabin_class,
+      };
+    }
+    return {
       tripType: "round-trip",
       flights: [{ origin: "", destination: "", departureDate: new Date() }],
       passengers: { adults: 1, children: 0 },
       cabinClass: "economy",
-    },
+    };
+  };
+
+  const form = useForm<SearchFormValues>({
+    resolver: zodResolver(searchSchema),
+    defaultValues: getInitialValues() as any,
   });
+
+  useEffect(() => {
+    if (initialData) {
+      form.reset(getInitialValues() as any);
+    }
+  }, [initialData, form]);
 
   const tripType = form.watch("tripType");
   const flights = form.watch("flights");
+  const returnDate = form.watch("returnDate");
 
   useEffect(() => {
     if (tripType !== "multi-city" && flights.length > 1) {
@@ -91,9 +124,6 @@ export function SearchForm({ dictionary, common }: SearchFormProps) {
   }, [tripType, flights.length, form]);
 
   function onSubmit(data: SearchFormValues) {
-    const searchParams = new URLSearchParams();
-    
-    // Construct Duffel-friendly slices
     const slices = data.flights.map(f => ({
       origin: f.origin,
       destination: f.destination,
@@ -119,8 +149,7 @@ export function SearchForm({ dictionary, common }: SearchFormProps) {
       cabin_class: data.cabinClass,
     };
 
-    // Use base64 to keep URL manageable
-    const encodedData = btoa(JSON.stringify(searchData));
+    const encodedData = Buffer.from(JSON.stringify(searchData)).toString("base64");
     router.push(`/${lang}/results?q=${encodedData}`);
   }
 
@@ -143,7 +172,6 @@ export function SearchForm({ dictionary, common }: SearchFormProps) {
     <div className="glass-card rounded-[2rem] p-8 shadow-2xl">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {/* Trip Type Selector */}
           <div className="flex flex-wrap items-center gap-6 pb-2 border-b">
             <FormField
               control={form.control}
@@ -153,25 +181,19 @@ export function SearchForm({ dictionary, common }: SearchFormProps) {
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      value={field.value}
                       className="flex space-x-4"
                     >
                       <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="round-trip" />
-                        </FormControl>
+                        <FormControl><RadioGroupItem value="round-trip" /></FormControl>
                         <FormLabel className="font-medium cursor-pointer">{dictionary.tripType.roundTrip}</FormLabel>
                       </FormItem>
                       <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="one-way" />
-                        </FormControl>
+                        <FormControl><RadioGroupItem value="one-way" /></FormControl>
                         <FormLabel className="font-medium cursor-pointer">{dictionary.tripType.oneWay}</FormLabel>
                       </FormItem>
                       <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="multi-city" />
-                        </FormControl>
+                        <FormControl><RadioGroupItem value="multi-city" /></FormControl>
                         <FormLabel className="font-medium cursor-pointer">{dictionary.tripType.multiCity}</FormLabel>
                       </FormItem>
                     </RadioGroup>
@@ -182,13 +204,12 @@ export function SearchForm({ dictionary, common }: SearchFormProps) {
 
             <div className="h-6 w-px bg-slate-200" />
 
-            {/* Cabin Class */}
             <FormField
               control={form.control}
               name="cabinClass"
               render={({ field }) => (
                 <FormItem className="w-44 space-y-0">
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger className="border-0 bg-transparent p-0 h-12 focus:ring-0 shadow-none font-medium">
                         <Briefcase className="mr-2 h-4 w-4 opacity-50" />
@@ -208,18 +229,13 @@ export function SearchForm({ dictionary, common }: SearchFormProps) {
 
             <div className="h-6 w-px bg-slate-200" />
 
-            {/* Passengers */}
             <FormField
               control={form.control}
               name="passengers"
               render={({ field }) => (
                 <FormItem className="w-auto space-y-0">
                   <FormControl>
-                    <PassengerPicker
-                      value={field.value}
-                      onChange={field.onChange}
-                      common={common}
-                    />
+                    <PassengerPicker value={field.value} onChange={field.onChange} common={common} />
                   </FormControl>
                 </FormItem>
               )}
@@ -288,8 +304,8 @@ export function SearchForm({ dictionary, common }: SearchFormProps) {
                             >
                               <span className="truncate">
                                 {flights[0].departureDate ? (
-                                  form.watch("returnDate") ? (
-                                    `${format(flights[0].departureDate, "MMM d")} - ${format(form.watch("returnDate")!, "MMM d")}`
+                                  returnDate ? (
+                                    `${format(flights[0].departureDate, "MMM d")} - ${format(returnDate, "MMM d")}`
                                   ) : (
                                     `${format(flights[0].departureDate, "MMM d")} - ${dictionary.form.return}`
                                   )
@@ -306,27 +322,25 @@ export function SearchForm({ dictionary, common }: SearchFormProps) {
                             mode="range"
                             selected={{
                               from: flights[0].departureDate,
-                              to: form.watch("returnDate")
+                              to: returnDate
                             }}
                             onSelect={(range: DateRange | undefined) => {
                               if (range?.from) {
                                 form.setValue(`flights.0.departureDate`, range.from);
-                              }
-                              form.setValue("returnDate", range?.to);
-                              // Clear error when user picks a return date
-                              if (range?.to) {
-                                form.clearErrors("returnDate");
+                                form.setValue("returnDate", range.to);
+                                if (range.to) form.clearErrors("returnDate");
+                              } else {
+                                // Cho phép xóa hoặc chọn lại từ đầu
+                                form.setValue("returnDate", undefined);
                               }
                             }}
-                            disabled={(date) => date < new Date()}
+                            disabled={(date) => isBefore(date, startOfDay(new Date()))}
                             numberOfMonths={2}
                             initialFocus
                           />
                         </PopoverContent>
                       </Popover>
-                      <FormMessage>
-                        {form.formState.errors.returnDate?.message}
-                      </FormMessage>
+                      <FormMessage>{form.formState.errors.returnDate?.message}</FormMessage>
                     </FormItem>
                   ) : (
                     <FormField
@@ -357,7 +371,7 @@ export function SearchForm({ dictionary, common }: SearchFormProps) {
                                 mode="single"
                                 selected={field.value}
                                 onSelect={field.onChange}
-                                disabled={(date) => date < new Date()}
+                                disabled={(date) => isBefore(date, startOfDay(new Date()))}
                                 initialFocus
                               />
                             </PopoverContent>
@@ -402,8 +416,20 @@ export function SearchForm({ dictionary, common }: SearchFormProps) {
           </div>
 
           <div className="flex justify-end pt-4">
-            <Button type="submit" size="lg" className="w-full md:w-auto px-12 text-lg h-12">
-              {dictionary.form.search}
+            <Button 
+              type="submit" 
+              size="lg" 
+              className="w-full md:w-auto px-12 text-lg h-12 cursor-pointer disabled:cursor-not-allowed"
+              disabled={form.formState.isSubmitting}
+            >
+              {form.formState.isSubmitting ? (
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  {dictionary.form.search}...
+                </div>
+              ) : (
+                dictionary.form.search
+              )}
             </Button>
           </div>
         </form>

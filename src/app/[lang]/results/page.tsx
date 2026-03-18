@@ -11,10 +11,17 @@ export default async function ResultsPage({
   const { lang } = await params;
   const dictionary = await getDictionary(lang);
 
+  if (!dictionary || !dictionary.search) {
+    return <div className="p-8 text-center">Error loading translations.</div>;
+  }
+
   return (
     <div className="min-h-screen bg-slate-50/50">
       <Suspense fallback={<div className="p-8 text-center">Loading search results...</div>}>
-        <ResultsList dictionary={dictionary.search} />
+        <ResultsList 
+          dictionary={dictionary.search} 
+          common={dictionary.common} 
+        />
       </Suspense>
     </div>
   );

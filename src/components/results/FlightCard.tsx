@@ -10,10 +10,11 @@ interface Slice {
   id: string;
   origin: { iata_code: string; name: string };
   destination: { iata_code: string; name: string };
-  departure_datetime: string;
-  arrival_datetime: string;
   duration: string;
-  segments: any[];
+  segments: {
+    departing_at: string;
+    arriving_at: string;
+  }[];
 }
 
 interface Offer {
@@ -61,45 +62,50 @@ export function FlightCard({ offer, dictionary }: FlightCardProps) {
 
         {/* Slices (Outbound and optional Inbound) */}
         <div className="flex-1 space-y-6 w-full">
-          {offer.slices.map((slice, idx) => (
-            <div key={slice.id} className="flex items-center justify-between gap-4">
-              <div className="flex flex-col items-start min-w-[80px]">
-                <span className="text-xl font-bold">
-                  {format(parseISO(slice.departure_datetime), "HH:mm")}
-                </span>
-                <span className="text-sm font-semibold text-slate-500">
-                  {slice.origin.iata_code}
-                </span>
-              </div>
+          {offer.slices.map((slice, idx) => {
+            const departureTime = slice.segments[0].departing_at;
+            const arrivalTime = slice.segments[slice.segments.length - 1].arriving_at;
 
-              <div className="flex-1 flex flex-col items-center px-4">
-                <div className="flex items-center gap-2 text-slate-400 w-full">
-                  <div className="h-px bg-slate-200 flex-1" />
-                  <Plane className="h-4 w-4 shrink-0 rotate-90" />
-                  <div className="h-px bg-slate-200 flex-1" />
-                </div>
-                <div className="mt-1 flex flex-col items-center">
-                  <span className="text-xs text-slate-500 font-medium">
-                    {formatDuration(slice.duration)}
+            return (
+              <div key={slice.id} className="flex items-center justify-between gap-4">
+                <div className="flex flex-col items-start min-w-[80px]">
+                  <span className="text-xl font-bold">
+                    {format(parseISO(departureTime), "HH:mm")}
                   </span>
-                  <Badge variant="secondary" className="mt-1 text-[10px] h-5">
-                    {slice.segments.length === 1 
-                      ? dictionary.results.stops.direct 
-                      : `${slice.segments.length - 1} ${dictionary.results.stops.stop}`}
-                  </Badge>
+                  <span className="text-sm font-semibold text-slate-500">
+                    {slice.origin.iata_code}
+                  </span>
+                </div>
+
+                <div className="flex-1 flex flex-col items-center px-4">
+                  <div className="flex items-center gap-2 text-slate-400 w-full">
+                    <div className="h-px bg-slate-200 flex-1" />
+                    <Plane className="h-4 w-4 shrink-0 rotate-90" />
+                    <div className="h-px bg-slate-200 flex-1" />
+                  </div>
+                  <div className="mt-1 flex flex-col items-center">
+                    <span className="text-xs text-slate-500 font-medium">
+                      {formatDuration(slice.duration)}
+                    </span>
+                    <Badge variant="secondary" className="mt-1 text-[10px] h-5">
+                      {slice.segments.length === 1 
+                        ? dictionary.results.stops.direct 
+                        : `${slice.segments.length - 1} ${dictionary.results.stops.stop}`}
+                    </Badge>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-end min-w-[80px]">
+                  <span className="text-xl font-bold">
+                    {format(parseISO(arrivalTime), "HH:mm")}
+                  </span>
+                  <span className="text-sm font-semibold text-slate-500">
+                    {slice.destination.iata_code}
+                  </span>
                 </div>
               </div>
-
-              <div className="flex flex-col items-end min-w-[80px]">
-                <span className="text-xl font-bold">
-                  {format(parseISO(slice.arrival_datetime), "HH:mm")}
-                </span>
-                <span className="text-sm font-semibold text-slate-500">
-                  {slice.destination.iata_code}
-                </span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Price & Action */}

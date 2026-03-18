@@ -54,6 +54,7 @@ export function AirportSearch({
     isLoadingSuggestions 
   } = useSuggestions();
 
+  // Tìm kiếm sân bay dựa trên từ khóa nhập vào
   const { data: searchResults, isLoading: isSearching } = useQuery({
     queryKey: ["airports", debouncedSearchTerm],
     queryFn: async () => {
@@ -64,6 +65,20 @@ export function AirportSearch({
       return json.data as Airport[];
     },
     enabled: debouncedSearchTerm.length >= 2,
+  });
+
+  // Lấy thông tin sân bay hiện tại khi reload page (nếu chỉ có mã IATA)
+  const { data: currentAirportInfo } = useQuery({
+    queryKey: ["airport-info", value],
+    queryFn: async () => {
+      if (!value) return null;
+      const res = await fetch(`/api/duffel/suggestions?query=${encodeURIComponent(value)}`);
+      if (!res.ok) return null;
+      const json = await res.json();
+      const airports = json.data as Airport[];
+      return airports.find(a => a.iata_code === value) || null;
+    },
+    enabled: !!value && searchTerm.length < 2,
   });
 
   useEffect(() => {
@@ -77,7 +92,7 @@ export function AirportSearch({
     : (searchResults || []);
 
   const selectedAirport = [...(originSuggestions || []), ...(destinationSuggestions || []), ...(searchResults || [])]
-    .find((a) => a.iata_code === value);
+    .find((a) => a.iata_code === value) || currentAirportInfo;
 
   return (
     <div className="flex flex-col space-y-2">
