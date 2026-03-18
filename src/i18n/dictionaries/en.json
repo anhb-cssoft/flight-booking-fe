@@ -1,0 +1,64 @@
+{
+  "common": {
+    "search": "Search",
+    "myBookings": "My Bookings",
+    "traveler": "traveler",
+    "travelers": "travelers",
+    "adult": "adult",
+    "adults": "adults",
+    "child": "child",
+    "children": "children",
+    "done": "Done",
+    "economy": "Economy",
+    "premium_economy": "Premium Economy",
+    "business": "Business",
+    "first": "First"
+  },
+  "home": {
+    "hero": {
+      "title": "The world is yours",
+      "subtitle": "to explore.",
+      "description": "Seamlessly book flights to any corner of the globe with SkyBooker's refined travel experience."
+    },
+    "features": {
+      "security": {
+        "title": "Trusted Security",
+        "description": "We employ military-grade encryption to ensure your booking data and personal information remain private."
+      },
+      "pricing": {
+        "title": "Smart Pricing",
+        "description": "Our algorithms analyze thousands of routes to find you the most efficient and cost-effective travel options."
+      },
+      "support": {
+        "title": "Global Support",
+        "description": "Travel with peace of mind knowing our support team is available 24/7 across every time zone."
+      }
+    }
+  },
+  "search": {
+    "tripType": {
+      "roundTrip": "Round-trip",
+      "oneWay": "One-way",
+      "multiCity": "Multi-city"
+    },
+    "form": {
+      "origin": "Leaving from",
+      "destination": "Going to",
+      "departure": "Departure Date",
+      "dates": "Travel dates",
+      "passengers": "Passengers",
+      "cabin": "Class",
+      "addFlight": "Add a flight",
+      "search": "Search",
+      "originPlaceholder": "Origin Airport",
+      "destinationPlaceholder": "Destination Airport",
+      "datePlaceholder": "Pick a date",
+      "datesPlaceholder": "Select dates",
+      "return": "Return",
+      "errors": {
+        "origin": "Please select an origin airport",
+        "destination": "Please select a destination airport"
+      }
+    }
+  }
+}

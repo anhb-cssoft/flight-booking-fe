@@ -34,11 +34,16 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { AirportSearch } from "./AirportSearch";
 import { PassengerPicker } from "./PassengerPicker";
 
-const searchSchema = z.object({
+interface SearchFormProps {
+  dictionary: any;
+  common: any;
+}
+
+const createSearchSchema = (t: any) => z.object({
   tripType: z.enum(["round-trip", "one-way", "multi-city"]),
   flights: z.array(z.object({
-    origin: z.string().min(3, "Please select an origin airport"),
-    destination: z.string().min(3, "Please select a destination airport"),
+    origin: z.string().min(3, t.form.errors.origin),
+    destination: z.string().min(3, t.form.errors.destination),
     departureDate: z.date(),
   })).min(1),
   returnDate: z.date().optional(),
@@ -49,9 +54,11 @@ const searchSchema = z.object({
   cabinClass: z.enum(["economy", "premium_economy", "business", "first"]),
 });
 
-type SearchFormValues = z.infer<typeof searchSchema>;
+type SearchFormValues = z.infer<ReturnType<typeof createSearchSchema>>;
 
-export function SearchForm() {
+export function SearchForm({ dictionary, common }: SearchFormProps) {
+  const searchSchema = createSearchSchema(dictionary);
+  
   const form = useForm<SearchFormValues>({
     resolver: zodResolver(searchSchema),
     defaultValues: {
@@ -111,19 +118,19 @@ export function SearchForm() {
                         <FormControl>
                           <RadioGroupItem value="round-trip" />
                         </FormControl>
-                        <FormLabel className="font-medium cursor-pointer">Round-trip</FormLabel>
+                        <FormLabel className="font-medium cursor-pointer">{dictionary.tripType.roundTrip}</FormLabel>
                       </FormItem>
                       <FormItem className="flex items-center space-x-2 space-y-0">
                         <FormControl>
                           <RadioGroupItem value="one-way" />
                         </FormControl>
-                        <FormLabel className="font-medium cursor-pointer">One-way</FormLabel>
+                        <FormLabel className="font-medium cursor-pointer">{dictionary.tripType.oneWay}</FormLabel>
                       </FormItem>
                       <FormItem className="flex items-center space-x-2 space-y-0">
                         <FormControl>
                           <RadioGroupItem value="multi-city" />
                         </FormControl>
-                        <FormLabel className="font-medium cursor-pointer">Multi-city</FormLabel>
+                        <FormLabel className="font-medium cursor-pointer">{dictionary.tripType.multiCity}</FormLabel>
                       </FormItem>
                     </RadioGroup>
                   </FormControl>
@@ -138,19 +145,19 @@ export function SearchForm() {
               control={form.control}
               name="cabinClass"
               render={({ field }) => (
-                <FormItem className="w-40 space-y-0">
+                <FormItem className="w-44 space-y-0">
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger className="border-0 bg-transparent p-0 h-12 focus:ring-0 shadow-none font-medium">
                         <Briefcase className="mr-2 h-4 w-4 opacity-50" />
-                        <SelectValue placeholder="Select class" />
+                        <SelectValue placeholder={dictionary.form.cabin} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="economy">Economy</SelectItem>
-                      <SelectItem value="premium_economy">Premium Economy</SelectItem>
-                      <SelectItem value="business">Business</SelectItem>
-                      <SelectItem value="first">First</SelectItem>
+                      <SelectItem value="economy">{common.economy}</SelectItem>
+                      <SelectItem value="premium_economy">{common.premium_economy}</SelectItem>
+                      <SelectItem value="business">{common.business}</SelectItem>
+                      <SelectItem value="first">{common.first}</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormItem>
@@ -169,6 +176,7 @@ export function SearchForm() {
                     <PassengerPicker
                       value={field.value}
                       onChange={field.onChange}
+                      common={common}
                     />
                   </FormControl>
                 </FormItem>
@@ -185,10 +193,10 @@ export function SearchForm() {
                     name={`flights.${index}.origin`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className={cn(index > 0 && "lg:sr-only")}>Leaving from</FormLabel>
+                        <FormLabel className={cn(index > 0 && "lg:sr-only")}>{dictionary.form.origin}</FormLabel>
                         <FormControl>
                           <AirportSearch
-                            placeholder="Origin Airport"
+                            placeholder={dictionary.form.originPlaceholder}
                             value={field.value}
                             onChange={field.onChange}
                           />
@@ -205,10 +213,10 @@ export function SearchForm() {
                     name={`flights.${index}.destination`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className={cn(index > 0 && "lg:sr-only")}>Going to</FormLabel>
+                        <FormLabel className={cn(index > 0 && "lg:sr-only")}>{dictionary.form.destination}</FormLabel>
                         <FormControl>
                           <AirportSearch
-                            placeholder="Destination Airport"
+                            placeholder={dictionary.form.destinationPlaceholder}
                             value={field.value}
                             onChange={field.onChange}
                           />
@@ -222,7 +230,7 @@ export function SearchForm() {
                 <div className="lg:col-span-3">
                   {tripType === "round-trip" && index === 0 ? (
                     <FormItem>
-                      <FormLabel>Travel dates</FormLabel>
+                      <FormLabel>{dictionary.form.dates}</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -238,10 +246,10 @@ export function SearchForm() {
                                   form.watch("returnDate") ? (
                                     `${format(flights[0].departureDate, "MMM d")} - ${format(form.watch("returnDate")!, "MMM d")}`
                                   ) : (
-                                    `${format(flights[0].departureDate, "MMM d")} - Return`
+                                    `${format(flights[0].departureDate, "MMM d")} - ${dictionary.form.return}`
                                   )
                                 ) : (
-                                  "Select dates"
+                                  dictionary.form.datesPlaceholder
                                 )}
                               </span>
                               <CalendarIcon className="ml-auto h-4 w-4 opacity-50 shrink-0" />
@@ -274,7 +282,7 @@ export function SearchForm() {
                       name={`flights.${index}.departureDate`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className={cn(index > 0 && "lg:sr-only")}>Departure Date</FormLabel>
+                          <FormLabel className={cn(index > 0 && "lg:sr-only")}>{dictionary.form.departure}</FormLabel>
                           <Popover>
                             <PopoverTrigger asChild>
                               <FormControl>
@@ -286,7 +294,7 @@ export function SearchForm() {
                                   )}
                                 >
                                   <span className="truncate">
-                                    {field.value ? format(field.value, "PPP") : "Pick a date"}
+                                    {field.value ? format(field.value, "PPP") : dictionary.form.datePlaceholder}
                                   </span>
                                   <CalendarIcon className="ml-auto h-4 w-4 opacity-50 shrink-0" />
                                 </Button>
@@ -335,7 +343,7 @@ export function SearchForm() {
                   onClick={addFlight}
                 >
                   <Plus className="mr-2 h-4 w-4" />
-                  Add a flight
+                  {dictionary.form.addFlight}
                 </Button>
               </div>
             )}
@@ -343,7 +351,7 @@ export function SearchForm() {
 
           <div className="flex justify-end pt-4">
             <Button type="submit" size="lg" className="w-full md:w-auto px-12 text-lg h-12">
-              Search
+              {dictionary.form.search}
             </Button>
           </div>
         </form>

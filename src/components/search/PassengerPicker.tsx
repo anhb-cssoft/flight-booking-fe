@@ -15,9 +15,10 @@ interface PassengerPickerProps {
     children: number;
   };
   onChange: (value: { adults: number; children: number }) => void;
+  common: any;
 }
 
-export function PassengerPicker({ value, onChange }: PassengerPickerProps) {
+export function PassengerPicker({ value, onChange, common }: PassengerPickerProps) {
   const [open, setOpen] = useState(false);
 
   const total = value.adults + value.children;
@@ -37,7 +38,8 @@ export function PassengerPicker({ value, onChange }: PassengerPickerProps) {
           <span className="flex items-center truncate">
             <Users className="mr-2 h-4 w-4 shrink-0 opacity-50" />
             <span className="truncate">
-              {total} traveler{total > 1 ? "s" : ""} ({value.adults} adult{value.adults > 1 ? "s" : ""}{value.children > 0 ? `, ${value.children} child${value.children > 1 ? "ren" : ""}` : ""})
+              {total} {total > 1 ? common.travelers : common.traveler} ({value.adults} {value.adults > 1 ? common.adults : common.adult}
+              {value.children > 0 ? `, ${value.children} ${value.children > 1 ? common.children : common.child}` : ""})
             </span>
           </span>
         </Button>
@@ -46,7 +48,7 @@ export function PassengerPicker({ value, onChange }: PassengerPickerProps) {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
-              <span className="text-sm font-semibold">Adults</span>
+              <span className="text-sm font-semibold">{common.adults}</span>
               <span className="text-xs text-muted-foreground">Age 18+</span>
             </div>
             <div className="flex items-center space-x-3">
@@ -74,7 +76,7 @@ export function PassengerPicker({ value, onChange }: PassengerPickerProps) {
 
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
-              <span className="text-sm font-semibold">Children</span>
+              <span className="text-sm font-semibold">{common.children}</span>
               <span className="text-xs text-muted-foreground">Age 0-17</span>
             </div>
             <div className="flex items-center space-x-3">
@@ -101,7 +103,7 @@ export function PassengerPicker({ value, onChange }: PassengerPickerProps) {
           </div>
 
           <div className="pt-2 border-t flex justify-end">
-            <Button size="sm" onClick={() => setOpen(false)}>Done</Button>
+            <Button size="sm" onClick={() => setOpen(false)}>{common.done}</Button>
           </div>
         </div>
       </PopoverContent>

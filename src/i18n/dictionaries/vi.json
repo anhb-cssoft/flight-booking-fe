@@ -1,0 +1,64 @@
+{
+  "common": {
+    "search": "Tìm kiếm",
+    "myBookings": "Chuyến bay của tôi",
+    "traveler": "hành khách",
+    "travelers": "hành khách",
+    "adult": "người lớn",
+    "adults": "người lớn",
+    "child": "trẻ em",
+    "children": "trẻ em",
+    "done": "Xong",
+    "economy": "Phổ thông",
+    "premium_economy": "Phổ thông đặc biệt",
+    "business": "Thương gia",
+    "first": "Hạng nhất"
+  },
+  "home": {
+    "hero": {
+      "title": "Thế giới là của bạn",
+      "subtitle": "để khám phá.",
+      "description": "Đặt vé máy bay đến mọi nơi trên thế giới một cách dễ dàng với trải nghiệm du lịch tinh tế của SkyBooker."
+    },
+    "features": {
+      "security": {
+        "title": "Bảo mật tin cậy",
+        "description": "Chúng tôi sử dụng mã hóa cấp quân sự để đảm bảo dữ liệu đặt chỗ và thông tin cá nhân của bạn được riêng tư."
+      },
+      "pricing": {
+        "title": "Giá cả thông minh",
+        "description": "Các thuật toán của chúng tôi phân tích hàng ngàn tuyến đường để tìm cho bạn các lựa chọn du lịch hiệu quả và tiết kiệm chi phí nhất."
+      },
+      "support": {
+        "title": "Hỗ trợ toàn cầu",
+        "description": "Yên tâm du lịch khi biết rằng đội ngũ hỗ trợ của chúng tôi luôn sẵn sàng 24/7 trên mọi múi giờ."
+      }
+    }
+  },
+  "search": {
+    "tripType": {
+      "roundTrip": "Khứ hồi",
+      "oneWay": "Một chiều",
+      "multiCity": "Nhiều thành phố"
+    },
+    "form": {
+      "origin": "Khởi hành từ",
+      "destination": "Đến",
+      "departure": "Ngày khởi hành",
+      "dates": "Ngày đi",
+      "passengers": "Hành khách",
+      "cabin": "Hạng ghế",
+      "addFlight": "Thêm chuyến bay",
+      "search": "Tìm kiếm",
+      "originPlaceholder": "Sân bay xuất phát",
+      "destinationPlaceholder": "Sân bay điểm đến",
+      "datePlaceholder": "Chọn ngày",
+      "datesPlaceholder": "Chọn ngày đi - về",
+      "return": "Ngày về",
+      "errors": {
+        "origin": "Vui lòng chọn sân bay xuất phát",
+        "destination": "Vui lòng chọn sân bay điểm đến"
+      }
+    }
+  }
+}

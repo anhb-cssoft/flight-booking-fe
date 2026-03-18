@@ -15,7 +15,12 @@ This file defines the automated testing strategy for ensuring the correctness of
   4.  Reaching the booking confirmation screen.
 - **Failures:** One E2E test for the "Sad Path" (e.g., searching for non-existent routes or handling expired offers).
 
-## 3. General Rules
+## 3. i18n Testing
+- **Language Detection:** Verify that the correct locale is selected based on URL or settings.
+- **Dictionary Integrity:** Test that all expected keys are available in both English and Vietnamese dictionaries.
+- **Dynamic Content:** Test locale-aware formatting for dates, durations, and currencies in flight cards.
+
+## 4. General Rules
 - **Mocking:** Mock all Duffel API calls in unit and component tests to ensure speed and reliability.
 - **Coverage:** Aim for 80%+ coverage on critical business logic folders (`lib/`, `hooks/`).
 - **Test Naming:** Use clear, descriptive names: `should show error when return date is before departure date`.

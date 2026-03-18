@@ -38,6 +38,24 @@ This skill provides expert guidance on building high-performance, accessible, an
 3. **Progressive Disclosure:** For complex passenger forms, group related fields and use a multi-step stepper or accordion to avoid overwhelming the user.
 4. **Visual Hierarchy:** Airline logos should be at least 32x32px and have high visibility to help users recognize their preferred carriers instantly.
 
+## Multi-language (i18n) Strategy
+1. **Directory Structure:** Use a folder-based routing structure (e.g., `src/app/[lang]/...`) to handle locale-specific routes.
+2. **Dictionaries:** Store translations in JSON files (e.g., `src/i18n/dictionaries/en.json`, `src/i18n/dictionaries/vi.json`).
+3. **Middleware:** Use middleware to detect the user's preferred language and redirect to the appropriate locale route if missing.
+4. **Hooks:** Create a custom hook (e.g., `useDictionary`) or pass the dictionary to client components to access translations.
+
+## Engineering Standards & Commit Rules
+1. **Commit Structure:** Every commit message must include a concise **title** and a descriptive **detail/body**.
+2. **Format:**
+  ```text
+  <type>(<scope>): <title>
+
+  - <detail 1>
+  - <detail 2>
+  ```
+3. **Type:** Use conventional commits (e.g., `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`).
+4. **Language:** Commit messages must be in English.
+
 ## State Management Strategy
 - **URL Params:** Store search criteria (Origin, Destination, Dates) in the URL for shareable search results.
 - **Zustand/Context:** Manage "Shopping Cart" state (selected offer) and passenger data across the multi-step booking flow.

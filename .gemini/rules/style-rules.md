@@ -26,7 +26,21 @@ This file defines the styling, naming, and UI/UX conventions for the flight book
 - **Aria Labels:** Use `aria-label` for icons or elements without visible text.
 - **Tab Index:** Ensure all interactive elements are reachable via keyboard navigation.
 
-## 4. Reusability
-- **UI Components:** Use **Shadcn UI** for foundational primitives (Buttons, Inputs, Dialogs).
-- **Utility Hooks:** Extract common styling logic (e.g., `useActiveLink`) into custom hooks.
-- **SVG Icons:** Prefer **Lucide React** for consistent iconography.
+## 5. Multi-language Support (i18n)
+- **Locales:** Support both English (`en`) and Vietnamese (`vi`).
+- **Translation Keys:** Never hardcode strings in components. Use a dictionary-based approach (e.g., `dictionary[lang].search.title`).
+- **Locale Detection:** Use middleware to detect and redirect users based on their preferred language or URL prefix (`/en/...`, `/vi/...`).
+- **Formatting:** Use locale-aware formatting for dates, currencies, and numbers (e.g., `date-fns/locale` or `Intl.DateTimeFormat`).
+
+## 6. Commit Rules
+- **Structure:** Every commit message must include a concise **title** and a descriptive **detail/body**.
+- **Format:**
+  ```text
+  <type>(<scope>): <title>
+
+  - <detail 1>
+  - <detail 2>
+  ```
+- **Type:** Use conventional commits (e.g., `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`).
+- **Description:** The body should explain "why" the change was made, not just "what" changed.
+- **Language:** Commit messages should be in English.
