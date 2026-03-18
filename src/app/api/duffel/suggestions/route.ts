@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import axios from "axios";
+import { Duffel } from "@duffel/api";
 
-const DUFFEL_API_URL = "https://api.duffel.com";
-const ACCESS_TOKEN = process.env.DUFFEL_ACCESS_TOKEN;
+const duffel = new Duffel({
+  token: process.env.DUFFEL_ACCESS_TOKEN || "",
+});
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -13,21 +14,16 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const response = await axios.get(`${DUFFEL_API_URL}/airports/suggestions`, {
-      params: { query },
-      headers: {
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
-        "Duffel-Version": "v1",
-        "Content-Type": "application/json",
-      },
+    const response = await duffel.suggestions.list({
+      query: query,
     });
 
-    return NextResponse.json(response.data);
+    return NextResponse.json(response);
   } catch (error: any) {
-    console.error("Duffel API Error:", error.response?.data || error.message);
+    console.error("Duffel SDK Error:", error.message);
     return NextResponse.json(
       { error: "Failed to fetch suggestions" },
-      { status: error.response?.status || 500 }
+      { status: 500 }
     );
   }
 }

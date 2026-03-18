@@ -17,8 +17,8 @@
 - **API Integration:** Duffel official Node/TypeScript SDK.
 
 ## Project-Specific Rules
-1. **Duffel API Hygiene:** Never expose the Duffel Access Token in client-side code. Use Next.js Route Handlers (`app/api/...`) to proxy requests if needed, or Server Actions.
-2. **IATA Codes:** Use a local mapping or the Duffel `suggestions` endpoint for airport auto-suggest.
+1. **Duffel API Hygiene:** Never expose the Duffel Access Token in client-side code. Use the official `@duffel/api` SDK within Next.js Route Handlers (`app/api/...`) or Server Actions.
+2. **IATA Codes:** Use the Duffel `suggestions` endpoint via the SDK for airport auto-suggest.
 3. **Responsive Design:** Flight cards must be readable on mobile and desktop.
 4. **Testing:** Unit tests for search logic and form validation (Vitest/Jest). E2E tests for the critical booking flow (Playwright/Cypress).
 
