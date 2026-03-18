@@ -1,0 +1,17 @@
+description = "Generates a standardized commit message based on staged and unstaged changes."
+
+prompt = """
+Please review the staged and unstaged changes in this project and generate a standardized commit message (Title and Body) according to the project's style.
+
+Context:
+- `git status`:
+!{git status}
+
+- `git diff HEAD`:
+!{git diff HEAD}
+
+- Recent commits (for style):
+!{git log -n 3}
+
+Follow the rules in `GEMINI.md` for generating the message.
+"""

@@ -22,6 +22,11 @@
 3. **Responsive Design:** Flight cards must be readable on mobile and desktop.
 4. **Testing:** Unit tests for search logic and form validation (Vitest/Jest). E2E tests for the critical booking flow (Playwright/Cypress).
 
+## Development Workflow
+1. **Commit Protocol:** Never commit automatically after completing a task.
+2. **Commit Message Action:** When a user requests `/commit-message`, review the staged and unstaged changes and generate a standardized commit message (Title and Body) for the user to copy.
+3. **Review:** Always wait for user review before considering a task complete.
+
 ## Documentation
 - Document all architectural decisions in the `docs/` folder or root `README.md`.
 - Include a section on AI tool usage as per requirements.

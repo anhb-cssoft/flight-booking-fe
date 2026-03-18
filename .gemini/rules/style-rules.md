@@ -33,8 +33,12 @@ This file defines the styling, naming, and UI/UX conventions for the flight book
 - **Formatting:** Use locale-aware formatting for dates, currencies, and numbers (e.g., `date-fns/locale` or `Intl.DateTimeFormat`).
 
 ## 6. Commit Rules
-- **Structure:** Every commit message must include a concise **title** and a descriptive **detail/body**.
-- **Format:**
+- **Manual Commit Only:** I will **NOT** perform any git commit operations unless explicitly asked.
+- **Commit Message Generation:** When the user issues the `/commit-message` action:
+  - Review all changes (staged and unstaged).
+  - Generate a standardized commit message containing a concise **title** and a detailed **body**.
+  - Propose the message to the user for them to copy.
+- **Message Structure:**
   ```text
   <type>(<scope>): <title>
 
@@ -42,5 +46,4 @@ This file defines the styling, naming, and UI/UX conventions for the flight book
   - <detail 2>
   ```
 - **Type:** Use conventional commits (e.g., `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`).
-- **Description:** The body should explain "why" the change was made, not just "what" changed.
-- **Language:** Commit messages should be in English.
+- **Language:** Commit messages must be in English.
