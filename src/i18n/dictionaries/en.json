@@ -118,7 +118,14 @@
         "lastName": "Last name is required",
         "email": "Invalid email address",
         "phoneNumber": "Phone number is required",
-        "bornOn": "Date of birth is required"
+        "bornOn": "Date of birth is required",
+        "ageAdult": "Adults must be 12 years or older. Please check your date of birth.",
+        "ageChild": "Children must be between 2 and 11 years old. Please check your date of birth.",
+        "invalidYear": "Please enter a valid year."
+      },
+      "hints": {
+        "adult": "Born on or before {year}",
+        "child": "Born between {year1} and {year2}"
       }
     },
     "sidebar": {

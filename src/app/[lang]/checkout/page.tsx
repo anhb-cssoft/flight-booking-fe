@@ -40,43 +40,78 @@ const createPassengerSchema = (t: any) =>
           error_map: () => ({ message: "Required" }),
         }),
         born_on: z.string().min(1, t.checkout.form.validation.bornOn),
-        email: z
-          .string()
-          .email(t.checkout.form.validation.email)
-          .optional()
-          .or(z.literal("")),
-        phone_number: z.string().optional().or(z.literal("")),
+        email: z.string().nullable().optional(),
+        phone_number: z.string().nullable().optional(),
         add_baggage: z.boolean().default(false),
       })
     ).superRefine((passengers, ctx) => {
+      passengers.forEach((p, index) => {
+        if (p.born_on) {
+          const birthDate = new Date(p.born_on);
+          const today = new Date();
+          const birthYear = birthDate.getFullYear();
+          
+          // Strict year validation
+          if (birthYear > today.getFullYear() || birthYear < 1900) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: t.checkout.form.validation.invalidYear,
+              path: [index, "born_on"],
+            });
+            return; // Skip further age checks if year is invalid
+          }
+
+          let age = today.getFullYear() - birthYear;
+          const m = today.getMonth() - birthDate.getMonth();
+          if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+          }
+
+          if (p.type === "adult" && age < 12) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: t.checkout.form.validation.ageAdult,
+              path: [index, "born_on"],
+            });
+          } else if (p.type === "child" && (age < 2 || age >= 12)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: t.checkout.form.validation.ageChild,
+              path: [index, "born_on"],
+            });
+          }
+        }
+      });
+
       const lead = passengers[0];
       if (lead) {
-        // Email validation: Required and must be valid format
-        if (!lead.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email)) {
+        // Email validation
+        if (!lead.email || lead.email.trim() === "" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email)) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: t.checkout.form.validation.email,
+            message: `${t.checkout.form.email} is required and must be valid`,
             path: [0, "email"],
           });
         }
-        // Phone validation: MUST start with '+' and contain only digits after that
+        // Phone validation
         const internationalPhoneRegex = /^\+[1-9]\d{1,14}$/;
-        if (!lead.phone_number) {
+        const phone = lead.phone_number?.trim();
+        if (!phone) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: t.checkout.form.validation.phoneNumber,
+            message: `${t.checkout.form.phoneNumber} is required`,
             path: [0, "phone_number"],
           });
-        } else if (!lead.phone_number.startsWith("+")) {
+        } else if (!phone.startsWith("+")) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: "Phone number must start with '+' (e.g., +84...)",
+            message: `${t.checkout.form.phoneNumber} must start with '+'`,
             path: [0, "phone_number"],
           });
-        } else if (!internationalPhoneRegex.test(lead.phone_number)) {
+        } else if (!internationalPhoneRegex.test(phone)) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: "Invalid international phone format",
+            message: `Invalid ${t.checkout.form.phoneNumber.toLowerCase()} format`,
             path: [0, "phone_number"],
           });
         }
@@ -129,6 +164,7 @@ export default function CheckoutPage() {
 
   const methods = useForm({
     resolver: zodResolver(schema),
+    mode: "onBlur",
     defaultValues: {
       passengers: storePassengers,
     },
@@ -165,14 +201,28 @@ export default function CheckoutPage() {
           }
           
           // Map validation errors to react-hook-form if source field is provided
-          if (firstError.type === "validation_error" && firstError.source?.field) {
-            const field = firstError.source.field;
-            // Map common Duffel fields to our form structure
-            if (field === "phone_number") {
-              methods.setError("passengers.0.phone_number", { message: firstError.message });
-            } else if (field === "email") {
-              methods.setError("passengers.0.email", { message: firstError.message });
+          if (firstError.type === "validation_error" && firstError.source) {
+            const { field, pointer } = firstError.source;
+            
+            // Extract index from pointer (e.g., "/data/passengers/1/phone_number" -> 1)
+            let index = 0;
+            if (pointer) {
+              const match = pointer.match(/\/passengers\/(\d+)\//);
+              if (match) index = parseInt(match[1], 10);
             }
+
+            // Map common Duffel fields to our form structure
+            let formField = field;
+            if (field === "given_name") formField = "first_name";
+            if (field === "family_name") formField = "last_name";
+
+            // If it's phone or email, always show it on the first passenger's form since that's where the inputs are
+            const isContactField = field === "phone_number" || field === "email";
+            const targetIndex = isContactField ? 0 : index;
+
+            methods.setError(`passengers.${targetIndex}.${formField}`, { 
+              message: firstError.message 
+            });
           }
 
           const title = firstError.title;
@@ -300,7 +350,7 @@ export default function CheckoutPage() {
           </div>
 
           {/* Sidebar Summary */}
-          <div className="lg:col-span-4 sticky top-12">
+          <div className="lg:col-span-4 sticky top-24">
             <Card className="border-slate-200 overflow-hidden shadow-2xl rounded-[2.5rem] bg-white pt-0">
               <CardHeader className="bg-slate-900 text-white p-8 py-6 px-8">
                 <CardTitle className="text-xl font-black flex items-center gap-3 uppercase tracking-widest">

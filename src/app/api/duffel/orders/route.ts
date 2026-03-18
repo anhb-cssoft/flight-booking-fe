@@ -12,6 +12,7 @@ export async function POST(request: NextRequest) {
 
     // Map passengers to Duffel format
     // Note: given_name and family_name are required by Duffel
+    const leadPassenger = passengers[0];
     const duffelPassengers = passengers.map((p: any) => ({
       id: p.id,
       title: p.title,
@@ -19,8 +20,10 @@ export async function POST(request: NextRequest) {
       family_name: p.last_name,
       gender: p.gender,
       born_on: p.born_on,
-      email: p.email || undefined,
-      phone_number: p.phone_number || undefined,
+      // Use lead passenger's contact details if not provided for others
+      // Some airlines require contact information for all passengers
+      email: p.email || leadPassenger?.email || undefined,
+      phone_number: p.phone_number || leadPassenger?.phone_number || undefined,
     }));
 
     // Create the order using 'instant' type for test environment

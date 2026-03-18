@@ -59,6 +59,48 @@ export function PassengerForm({ index, dictionary }: PassengerFormProps) {
     passengerErrors?.first_name ||
     passengerErrors?.last_name;
 
+  const currentYear = new Date().getFullYear();
+  const hints = dictionary.checkout.form.hints;
+  
+  const getBirthHint = () => {
+    if (currentPassenger?.type === "child") {
+      return hints.child
+        .replace("{year1}", (currentYear - 11).toString())
+        .replace("{year2}", (currentYear - 2).toString());
+    }
+    return null;
+  };
+
+  const birthHint = getBirthHint();
+
+  const getDateRange = () => {
+    const today = new Date();
+    const formatDate = (date: Date) => {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    };
+
+    if (currentPassenger?.type === "adult") {
+      const min = new Date();
+      min.setFullYear(today.getFullYear() - 120);
+      const max = new Date();
+      max.setFullYear(today.getFullYear() - 12);
+      return { min: formatDate(min), max: formatDate(max) };
+    } else if (currentPassenger?.type === "child") {
+      const min = new Date();
+      min.setFullYear(today.getFullYear() - 12);
+      min.setDate(min.getDate() + 1);
+      const max = new Date();
+      max.setFullYear(today.getFullYear() - 2);
+      return { min: formatDate(min), max: formatDate(max) };
+    }
+    return { min: "1900-01-01", max: formatDate(today) };
+  };
+
+  const { min: minDOB, max: maxDOB } = getDateRange();
+
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <Card className="overflow-hidden border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 rounded-[2rem] bg-white pt-0">
@@ -73,7 +115,12 @@ export function PassengerForm({ index, dictionary }: PassengerFormProps) {
                 {dictionary.checkout.passenger} {index + 1}
               </h3>
             </div>
-            <div className="px-3 py-1 rounded-full bg-slate-800 text-[10px] font-black text-slate-400 uppercase tracking-widest border border-slate-700">
+            <div className={cn(
+              "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border transition-colors",
+              currentPassenger?.type === "child"
+                ? "bg-amber-100 text-amber-700 border-amber-200"
+                : "bg-slate-800 text-slate-400 border-slate-700"
+            )}>
               {currentPassenger?.type || "Adult"}
             </div>
           </div>
@@ -259,14 +306,21 @@ export function PassengerForm({ index, dictionary }: PassengerFormProps) {
               </div>
 
               <div className="space-y-3">
-                <FormLabel
-                  className={cn(
-                    "text-[11px] font-black uppercase tracking-[0.2em] ml-1 transition-colors",
-                    passengerErrors?.born_on ? "text-destructive" : "text-slate-400",
+                <div className="flex flex-row items-center gap-2 ml-1">
+                  <FormLabel
+                    className={cn(
+                      "text-[11px] font-black uppercase tracking-[0.2em] transition-colors",
+                      passengerErrors?.born_on ? "text-destructive" : "text-slate-400",
+                    )}
+                  >
+                    {t.bornOn}
+                  </FormLabel>
+                  {birthHint && (
+                    <span className="text-[10px] font-bold text-slate-400 leading-none normal-case tracking-normal">
+                      ({birthHint})
+                    </span>
                   )}
-                >
-                  {t.bornOn}
-                </FormLabel>
+                </div>
                 <FormField
                   control={control}
                   name={`passengers.${index}.born_on`}
@@ -276,7 +330,17 @@ export function PassengerForm({ index, dictionary }: PassengerFormProps) {
                         <div className="relative group">
                           <Input
                             type="date"
+                            min={minDOB}
+                            max={maxDOB}
                             {...field}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (val) {
+                                const year = parseInt(val.split("-")[0]);
+                                if (year > 9999) return; // Prevent 5+ digit years
+                              }
+                              field.onChange(val);
+                            }}
                             className={cn(
                               "h-14 bg-slate-50 border rounded-2xl pl-12 pr-6 font-bold focus:ring-primary/20 transition-all w-full",
                               passengerErrors?.born_on

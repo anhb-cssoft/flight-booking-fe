@@ -118,7 +118,14 @@
         "lastName": "Vui lòng nhập họ",
         "email": "Địa chỉ email không hợp lệ",
         "phoneNumber": "Vui lòng nhập số điện thoại",
-        "bornOn": "Vui lòng chọn ngày sinh"
+        "bornOn": "Vui lòng chọn ngày sinh",
+        "ageAdult": "Người lớn phải từ 12 tuổi trở lên. Vui lòng kiểm tra lại ngày sinh.",
+        "ageChild": "Trẻ em phải từ 2 đến 11 tuổi. Vui lòng kiểm tra lại ngày sinh.",
+        "invalidYear": "Năm sinh không hợp lệ."
+      },
+      "hints": {
+        "adult": "Sinh từ năm {year} trở về trước",
+        "child": "Sinh từ năm {year1} đến {year2}"
       }
     },
     "sidebar": {
