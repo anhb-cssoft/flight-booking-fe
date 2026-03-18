@@ -60,7 +60,7 @@ export function AirportSearch({ placeholder, value, onChange, label }: AirportSe
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between font-normal"
+            className="w-full h-12 justify-between font-normal"
           >
             {value ? (
               <span className="flex items-center truncate min-w-0">

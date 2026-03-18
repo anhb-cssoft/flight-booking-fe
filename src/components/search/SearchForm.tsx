@@ -141,7 +141,7 @@ export function SearchForm() {
                 <FormItem className="w-40 space-y-0">
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger className="border-0 bg-transparent p-0 focus:ring-0 shadow-none font-medium">
+                      <SelectTrigger className="border-0 bg-transparent p-0 h-12 focus:ring-0 shadow-none font-medium">
                         <Briefcase className="mr-2 h-4 w-4 opacity-50" />
                         <SelectValue placeholder="Select class" />
                       </SelectTrigger>
@@ -178,8 +178,8 @@ export function SearchForm() {
 
           <div className="space-y-4 pt-4">
             {flights.map((_, index) => (
-              <div key={index} className="grid grid-cols-1 gap-4 lg:grid-cols-12 items-end group">
-                <div className="lg:col-span-4">
+              <div key={index} className="grid grid-cols-1 gap-4 lg:grid-cols-12 items-start group">
+                <div className="lg:col-span-5">
                   <FormField
                     control={form.control}
                     name={`flights.${index}.origin`}
@@ -219,7 +219,7 @@ export function SearchForm() {
                   />
                 </div>
 
-                <div className={cn(tripType === "multi-city" ? "lg:col-span-3" : "lg:col-span-4")}>
+                <div className="lg:col-span-3">
                   {tripType === "round-trip" && index === 0 ? (
                     <FormItem>
                       <FormLabel>Travel dates</FormLabel>
@@ -229,7 +229,7 @@ export function SearchForm() {
                             <Button
                               variant={"outline"}
                               className={cn(
-                                "w-full pl-3 text-left font-normal h-10 truncate",
+                                "w-full pl-3 text-left font-normal h-12 truncate",
                                 !flights[0].departureDate && "text-muted-foreground"
                               )}
                             >
@@ -281,7 +281,7 @@ export function SearchForm() {
                                 <Button
                                   variant={"outline"}
                                   className={cn(
-                                    "w-full pl-3 text-left font-normal h-10 truncate",
+                                    "w-full pl-3 text-left font-normal h-12 truncate",
                                     !field.value && "text-muted-foreground"
                                   )}
                                 >

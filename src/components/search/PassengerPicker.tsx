@@ -32,7 +32,7 @@ export function PassengerPicker({ value, onChange }: PassengerPickerProps) {
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="w-full justify-between font-normal"
+          className="w-full h-12 justify-between font-normal"
         >
           <span className="flex items-center truncate">
             <Users className="mr-2 h-4 w-4 shrink-0 opacity-50" />
