@@ -7,7 +7,7 @@ export async function Navbar({ lang }: { lang: Locale }) {
   const dictionary = await getDictionary(lang);
 
   return (
-    <header className="glass-nav border-b">
+    <header className="glass-nav border-b print:hidden">
       <div className="container mx-auto flex h-20 items-center justify-between px-4 md:px-6">
         <Link href={`/${lang}`} className="flex items-center gap-2 text-2xl font-bold tracking-tight text-primary">
           <Plane className="h-8 w-8 rotate-45" />

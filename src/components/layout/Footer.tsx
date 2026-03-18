@@ -5,7 +5,7 @@ export async function Footer({ lang }: { lang: Locale }) {
   const dictionary = await getDictionary(lang);
 
   return (
-    <footer className="border-t bg-slate-50">
+    <footer className="border-t bg-slate-50 print:hidden">
       <div className="container mx-auto px-4 md:px-6 py-8 md:py-12">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div className="space-y-4">
