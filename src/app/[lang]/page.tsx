@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { SearchForm } from "@/components/search/SearchForm";
 import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n-config";
@@ -12,33 +13,48 @@ export default async function Home({
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden pt-16 pb-24 md:pt-32 md:pb-48 px-4">
-        <div className="container mx-auto relative z-10 flex flex-col items-center">
-          <div className="max-w-4xl text-center w-full">
-            <h1 className="mb-6 md:mb-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-tight">
-              <span className="bg-gradient-to-b from-slate-900 to-slate-600 bg-clip-text text-transparent">
-                {dictionary.home.hero.title}
-              </span>
-              <br className="hidden sm:block" />
-              <span className="bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent">
-                {dictionary.home.hero.subtitle}
-              </span>
-            </h1>
-            <p className="mx-auto mb-10 md:mb-12 max-w-2xl text-base sm:text-lg md:text-xl lg:text-2xl text-slate-500 font-medium animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
-              {dictionary.home.hero.description}
-            </p>
-          </div>
+      {/* Hero & Search Background Wrapper */}
+      <div className="relative w-full">
+        {/* Background Image */}
+        <div className="absolute inset-0 -z-10 w-full h-full overflow-hidden">
+          <Image
+            src="/background.webp"
+            alt="Sky and clouds background"
+            fill
+            priority
+            quality={100}
+            className="object-cover object-center transition-opacity duration-1000"
+            sizes="100vw"
+          />
+          {/* Subtle gradient overlay to blend with the page flow and ensure text readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white/0 via-white/10 to-[hsl(var(--background))]" />
         </div>
-        
-        {/* Background Accents */}
-        <div className="absolute top-0 left-1/2 -z-10 h-[500px] md:h-[700px] w-full -translate-x-1/2 opacity-30 blur-[100px] md:blur-[150px] bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/30 via-blue-400/20 to-transparent" />
-      </section>
 
-      {/* Search Section */}
-      <section className="px-4 relative z-20 -mt-20 sm:-mt-24 md:-mt-48 mb-20 md:mb-32 flex justify-center">
-        <SearchForm dictionary={dictionary.search} common={dictionary.common} />
-      </section>
+        {/* Hero Section */}
+        <section className="relative pt-16 pb-24 md:pt-32 md:pb-48 px-4">
+          <div className="container mx-auto relative z-10 flex flex-col items-center">
+            <div className="max-w-4xl text-center w-full">
+              <h1 className="mb-6 md:mb-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-tight">
+                <span className="bg-gradient-to-b from-slate-900 to-slate-600 bg-clip-text text-transparent">
+                  {dictionary.home.hero.title}
+                </span>
+                <br className="hidden sm:block" />
+                <span className="bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent">
+                  {dictionary.home.hero.subtitle}
+                </span>
+              </h1>
+              <p className="mx-auto mb-10 md:mb-12 max-w-2xl text-base sm:text-lg md:text-xl lg:text-2xl text-slate-500 font-medium animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
+                {dictionary.home.hero.description}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Search Section */}
+        <section className="px-4 relative z-20 -mt-20 sm:-mt-24 md:-mt-48 mb-20 md:mb-32 flex justify-center">
+          <SearchForm dictionary={dictionary.search} common={dictionary.common} />
+        </section>
+      </div>
 
       {/* Featured Destinations / Benefits */}
       <section className="container mx-auto px-4 mb-24 md:mb-32">
