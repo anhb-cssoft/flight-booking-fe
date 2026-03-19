@@ -1,6 +1,7 @@
 # Tasks Checklist - SkyBooker
 
 ## Phase 1: Foundation (COMPLETED)
+
 - [x] Initialize Next.js 15 project with TypeScript & Tailwind CSS.
 - [x] Configure i18n with multi-language support (EN/VI).
 - [x] Set up TanStack Query for server state management.
@@ -8,6 +9,7 @@
 - [x] Design layout with Navbar and Footer.
 
 ## Phase 2: Search Enhancement (COMPLETED)
+
 - [x] Request user geolocation on mount.
 - [x] Implement `/api/duffel/nearby` for airport suggestions based on location.
 - [x] Add debouncing to airport search input to reduce API calls.
@@ -16,6 +18,7 @@
 - [x] Add multi-city flight selection logic.
 
 ## Phase 3: Results Listing (COMPLETED)
+
 - [x] Implement search submission and navigation to `/results`.
 - [x] Create `/api/duffel/offers` route handler to fetch flight offers.
 - [x] Design and implement flight search results page with loading skeletons.
@@ -25,21 +28,24 @@
 - [x] Handle empty states and errors gracefully.
 
 ## Phase 4: Passenger Details (UPCOMING)
-- [ ] Design and implement the `/checkout` page.
-- [ ] Create a multi-step form for entering passenger details.
-- [ ] Integrate form validation using React Hook Form and Zod.
-- [ ] Display a pinned trip summary to guide the user.
-- [ ] Persist passenger data in local storage or global state.
+
+- [x] Design and implement the `/checkout` page.
+- [x] Create a multi-step form for entering passenger details.
+- [x] Integrate form validation using React Hook Form and Zod.
+- [x] Display a pinned trip summary to guide the user.
+- [x] Persist passenger data in local storage or global state.
 
 ## Phase 5: Booking & Confirmation
-- [ ] Implement `/api/duffel/orders` for order creation.
-- [ ] Create order confirmation page (`/confirmation/[id]`).
-- [ ] Display order summary and airline reference codes.
-- [ ] Handle payment simulation/errors using Duffel's test environment.
+
+- [x] Implement `/api/duffel/orders` for order creation.
+- [x] Create order confirmation page (`/confirmation/[id]`).
+- [x] Display order summary and airline reference codes.
+- [x] Handle payment simulation/errors using Duffel's test environment.
 
 ## Phase 6: Finalization
-- [ ] Review and clean up code consistency.
-- [ ] Conduct end-to-end testing (Playwright or manual).
-- [ ] Finalize documentation (Architecture decisions, setup guide, AI tool usage).
-- [ ] Deploy to Vercel/Netlify.
-- [ ] Perform accessibility (a11y) check.
+
+- [x] Review and clean up code consistency.
+- [x] Conduct end-to-end testing (Playwright or manual).
+- [x] Finalize documentation (Architecture decisions, setup guide, AI tool usage).
+- [x] Deploy to Vercel/Netlify.
+- [x] Perform accessibility (a11y) check.
