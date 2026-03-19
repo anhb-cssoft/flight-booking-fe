@@ -142,6 +142,16 @@
       "totalPaid": "Tổng tiền đã thanh toán",
       "backToHome": "Quay lại Trang chủ",
       "itinerary": "Tóm tắt hành trình"
+    },
+    "myBookings": {
+      "title": "Chuyến bay của tôi",
+      "subtitle": "Xem và quản lý các đặt chỗ chuyến bay gần đây của bạn.",
+      "noBookings": "Bạn chưa có đặt chỗ nào.",
+      "bookNow": "Tìm chuyến bay ngay",
+      "ref": "Mã",
+      "passenger": "Hành khách",
+      "bookedOn": "Ngày đặt",
+      "viewDetails": "Xem chi tiết"
     }
   }
 }

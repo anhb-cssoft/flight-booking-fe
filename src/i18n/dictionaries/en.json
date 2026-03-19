@@ -142,6 +142,16 @@
       "totalPaid": "Total Paid",
       "backToHome": "Back to Home",
       "itinerary": "Itinerary Summary"
+    },
+    "myBookings": {
+      "title": "My Bookings",
+      "subtitle": "Review and manage your recent flight reservations.",
+      "noBookings": "You haven't made any bookings yet.",
+      "bookNow": "Find a flight",
+      "ref": "Ref",
+      "passenger": "Passenger",
+      "bookedOn": "Booked on",
+      "viewDetails": "View Details"
     }
   }
 }

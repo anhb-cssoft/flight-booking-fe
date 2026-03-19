@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { CheckCircle2, Plane, ArrowRight, Printer, Home, User, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format, parseISO } from "date-fns";
@@ -21,6 +22,25 @@ export function BookingConfirmation({
   const router = useRouter();
   const resetBooking = useBookingStore((state) => state.resetBooking);
   const t = dictionary.checkout.confirmation;
+
+  useEffect(() => {
+    if (order && typeof window !== "undefined") {
+      try {
+        const savedBookings = JSON.parse(localStorage.getItem("my-bookings") || "[]");
+        const isAlreadySaved = savedBookings.some((b: any) => b.id === order.id);
+        
+        if (!isAlreadySaved) {
+          const newBooking = {
+            ...order,
+            savedAt: new Date().toISOString(),
+          };
+          localStorage.setItem("my-bookings", JSON.stringify([newBooking, ...savedBookings]));
+        }
+      } catch (e) {
+        console.error("Failed to save booking to localStorage", e);
+      }
+    }
+  }, [order]);
 
   const leadPassenger = order.passengers[0];
   

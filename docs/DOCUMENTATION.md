@@ -20,6 +20,7 @@ The project follows a modular, feature-based directory structure in `src/compone
 - `search/`: Components related to flight search (Airport auto-suggest, Date pickers, Passenger counters).
 - `results/`: Flight listing, filtering, and sorting logic.
 - `checkout/`: Passenger information forms and booking confirmation.
+- `my-bookings/`: Responsive flight history cards with `localStorage` persistence for review.
 - `ui/`: Reusable, low-level UI primitives (Buttons, Inputs, Dialogs) built on top of **Shadcn UI**.
 - `layout/`: Global layout elements like the Navbar and Footer.
 
