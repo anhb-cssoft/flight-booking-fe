@@ -1,4 +1,9 @@
 {
+  "seo": {
+    "title": "SkyBooker - Đặt vé máy bay đến mọi nơi trên thế giới",
+    "description": "Trải nghiệm dịch vụ đặt vé máy bay tốt nhất với SkyBooker. Dễ sử dụng, bảo mật và giá cả thông minh. Đặt chuyến đi tiếp theo của bạn ngay!",
+    "keywords": "đặt vé máy bay, skybooker, mua vé máy bay, vé máy bay giá rẻ, du lịch, duffel api"
+  },
   "common": {
     "search": "Tìm kiếm",
     "myBookings": "Chuyến bay của tôi",

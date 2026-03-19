@@ -13,7 +13,24 @@ export default async function Home({
 
   return (
     <div className="flex flex-col min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "SkyBooker",
+            url: `https://flight-booking-fe-pied.vercel.app/${lang}`,
+            potentialAction: {
+              "@type": "SearchAction",
+              target: `https://flight-booking-fe-pied.vercel.app/${lang}/results?origin={search_term_string}`,
+              "query-input": "required name=search_term_string",
+            },
+          }),
+        }}
+      />
       {/* Hero & Search Background Wrapper */}
+
       <div className="relative w-full">
         {/* Background Image */}
         <div className="absolute inset-0 -z-10 w-full h-full overflow-hidden">
@@ -52,7 +69,10 @@ export default async function Home({
 
         {/* Search Section */}
         <section className="px-4 relative z-20 -mt-20 sm:-mt-24 md:-mt-48 mb-20 md:mb-32 flex justify-center">
-          <SearchForm dictionary={dictionary.search} common={dictionary.common} />
+          <SearchForm
+            dictionary={dictionary.search}
+            common={dictionary.common}
+          />
         </section>
       </div>
 
@@ -61,10 +81,24 @@ export default async function Home({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
           <div className="group space-y-5 p-2 flex flex-col items-center md:items-start text-center md:text-left">
             <div className="glass-card flex h-14 w-14 md:h-16 md:w-16 items-center justify-center rounded-2xl text-primary transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary/20">
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+              </svg>
             </div>
             <div className="space-y-2">
-              <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">{dictionary.home.features.security.title}</h3>
+              <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
+                {dictionary.home.features.security.title}
+              </h3>
               <p className="text-slate-500 font-medium leading-relaxed max-w-sm">
                 {dictionary.home.features.security.description}
               </p>
@@ -72,10 +106,26 @@ export default async function Home({
           </div>
           <div className="group space-y-5 p-2 flex flex-col items-center md:items-start text-center md:text-left">
             <div className="glass-card flex h-14 w-14 md:h-16 md:w-16 items-center justify-center rounded-2xl text-primary transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary/20">
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+                <path d="M12 18V6" />
+              </svg>
             </div>
             <div className="space-y-2">
-              <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">{dictionary.home.features.pricing.title}</h3>
+              <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
+                {dictionary.home.features.pricing.title}
+              </h3>
               <p className="text-slate-500 font-medium leading-relaxed max-w-sm">
                 {dictionary.home.features.pricing.description}
               </p>
@@ -83,10 +133,24 @@ export default async function Home({
           </div>
           <div className="group space-y-5 p-2 flex flex-col items-center md:items-start text-center md:text-left sm:col-span-2 lg:col-span-1 sm:max-w-md sm:mx-auto lg:max-w-none">
             <div className="glass-card flex h-14 w-14 md:h-16 md:w-16 items-center justify-center rounded-2xl text-primary transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary/20">
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+              </svg>
             </div>
             <div className="space-y-2">
-              <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">{dictionary.home.features.support.title}</h3>
+              <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
+                {dictionary.home.features.support.title}
+              </h3>
               <p className="text-slate-500 font-medium leading-relaxed max-w-sm">
                 {dictionary.home.features.support.description}
               </p>

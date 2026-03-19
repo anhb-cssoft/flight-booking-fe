@@ -15,13 +15,46 @@ type Props = {
 
 export async function generateMetadata(
   { params }: Props,
-  parent: ResolvingMetadata
+  parent: ResolvingMetadata,
 ): Promise<Metadata> {
   const { lang } = await params;
-  
+  const dictionary = await getDictionary(lang as Locale);
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    "https://flight-booking-fe-pied.vercel.app";
+
   return {
-    title: "SkyBooker - Flight Booking",
-    description: "Powered by Duffel API",
+    title: {
+      template: `%s | SkyBooker`,
+      default: dictionary.seo.title,
+    },
+    description: dictionary.seo.description,
+    keywords: dictionary.seo.keywords,
+    alternates: {
+      canonical: `${baseUrl}/${lang}`,
+      languages: {
+        "en-US": `${baseUrl}/en`,
+        "vi-VN": `${baseUrl}/vi`,
+      },
+    },
+    openGraph: {
+      title: dictionary.seo.title,
+      description: dictionary.seo.description,
+      url: `${baseUrl}/${lang}`,
+      siteName: "SkyBooker",
+      locale: lang === "vi" ? "vi_VN" : "en_US",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: dictionary.seo.title,
+      description: dictionary.seo.description,
+      creator: "@skybooker",
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
   };
 }
 

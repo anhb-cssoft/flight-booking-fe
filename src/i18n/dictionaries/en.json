@@ -1,4 +1,9 @@
 {
+  "seo": {
+    "title": "SkyBooker - Book Flights to Anywhere in the World",
+    "description": "Experience the best flight booking service with SkyBooker. Easy to use, secure, and smart pricing. Book your next trip now!",
+    "keywords": "flight booking, skybooker, book flights, cheap flights, travel, duffel api"
+  },
   "common": {
     "search": "Search",
     "myBookings": "My Bookings",
